@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bydomingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#efede6;--card:#f8f6f0;--ink:#181817;--muted:#68665f}
+*{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:"Crimson Pro",Georgia,serif}
+.wrap{max-width:1280px;margin:auto;padding:20px 24px 60px}
+header{height:86px;position:relative}
+.logo{position:absolute;left:75%;top:34px;transform:translateX(-50%);font-size:25px;font-weight:600;letter-spacing:-.035em;white-space:nowrap}
+
+.utility-row{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px;padding:0}
+.categories{display:flex;gap:12px;align-items:center;margin:0;padding:0}
+.categories a{width:48px;height:48px;color:inherit;text-decoration:none;display:grid;place-items:center}
+.categories svg{width:40px;height:40px;display:block}
+.contact-link{width:48px;height:48px;color:inherit;text-decoration:none;display:grid;place-items:center;margin-right:1px}
+.contact-link svg{width:38px;height:38px;display:block;transition:transform .15s ease}
+.contact-link:hover svg{transform:translateY(-2px)}
+.categories a:hover svg{transform:translateY(-2px)}
+.categories svg{transition:transform .15s ease}
+
+.projects{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{grid-column:span 4;border:1.5px solid;background:var(--card);min-height:260px;padding:18px;display:flex;flex-direction:column}
+.feature{grid-column:span 7;min-height:470px;padding:0}
+.sound{grid-column:span 5;min-height:470px}
+.copy{height:100%;display:flex;flex-direction:column}
+.feature .copy{padding:18px}
+.visual{height:270px;border-bottom:1.5px solid;position:relative;background:repeating-linear-gradient(45deg,transparent 0 18px,rgba(0,0,0,.045) 18px 19px)}
+.machine{position:absolute;width:105px;height:132px;border:3px solid;left:50%;top:50%;transform:translate(-50%,-50%)}
+.machine span{position:absolute;width:18px;height:18px;border:2px solid;border-radius:50%;top:24px}
+.machine span:first-child{left:18px}.machine span:last-child{right:18px}
+.kind{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
+h2{font-size:31px;line-height:1;margin:0 0 12px;font-weight:650;letter-spacing:-.025em}
+p{font-size:19px;line-height:1.3;margin:0}
+.excerpt{font-size:29px;line-height:1.12;font-weight:400}
+.meta{margin-top:auto;border-top:1px solid;padding-top:9px;font-size:12px;font-weight:600;letter-spacing:.07em}
+.wave{height:170px;display:flex;align-items:center;gap:7px}
+.wave i{width:7px;background:var(--ink);height:var(--h)}
+button{font:600 15px "Crimson Pro";background:transparent;border:1px solid;padding:7px 12px;width:max-content;cursor:pointer}
+footer{font-size:13px;margin-top:34px;text-align:right}
+@media(max-width:800px){.logo{left:auto;right:0;transform:none}.categories{display:flex}.feature,.sound,.card{grid-column:1/-1}}
+</style>
+</head>
+<body><div class="wrap"><header><div class="logo">bydomingo</div></header>
+
+
+<div class="utility-row">
+<nav class="categories" aria-label="Work categories">
+  <a href="#poetry" aria-label="Poetry">
+    <svg viewBox="0 0 80 80" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="34" cy="35" r="5"/>
+        <path d="M34 30c-8-12-18-5-13 4 3 6 9 5 13 1"/>
+        <path d="M39 35c12-8 16 4 8 9-6 3-10-2-13-5"/>
+        <path d="M34 40c6 13-8 17-13 7-3-6 3-10 8-12"/>
+        <path d="M29 35c-12 6-16-7-6-11 6-2 9 4 11 8"/>
+        <path d="M34 40v22"/>
+        <path d="M34 51c-7-4-11 0-12 5"/>
+        <path d="M34 55c7-4 11 0 12 5"/>
+        <path d="M55 16c7-5 12 2 8 8-3 5-8 4-12 1"/>
+      </g>
+    </svg>
+  </a>
+
+  <a href="#robots" aria-label="Robots">
+    <svg viewBox="0 0 80 80" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="18" y="20" width="44" height="38" rx="9"/>
+        <path d="M40 20V12"/>
+        <circle cx="40" cy="10" r="2"/>
+        <circle cx="31" cy="37" r="3"/>
+        <circle cx="49" cy="37" r="3"/>
+        <path d="M31 48c5 5 13 5 18 0"/>
+        <path d="M18 33h-5M62 33h5"/>
+      </g>
+    </svg>
+  </a>
+
+  <a href="#music" aria-label="Music">
+    <svg viewBox="0 0 80 80" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 46c5-15 19-21 31-13 8 5 9 16 2 23-7 8-21 8-29 1-5-4-7-7-4-11z"/>
+        <path d="M26 43c-6-5-12-4-16 1 6 1 9 4 11 8"/>
+        <circle cx="48" cy="41" r="2"/>
+        <path d="M53 45l11-2-8 6"/>
+        <path d="M36 58v8M46 58v8"/>
+        <path d="M57 24c3-5 8-4 8 1v8"/>
+        <circle cx="61" cy="34" r="3"/>
+        <path d="M68 18c3-5 8-4 8 1v8"/>
+        <circle cx="72" cy="28" r="3"/>
+      </g>
+    </svg>
+  </a>
+
+  <a href="#video" aria-label="Video">
+    <svg viewBox="0 0 80 80" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 40c8-14 18-21 30-21s22 7 30 21c-8 14-18 21-30 21S18 54 10 40z"/>
+        <circle cx="40" cy="40" r="10"/>
+        <circle cx="40" cy="40" r="3"/>
+      </g>
+    </svg>
+  </a>
+</nav>
+  <a class="contact-link" href="mailto:hello@bydomingo.com" aria-label="Contact by email" title="Contact">
+    <svg viewBox="0 0 80 80" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="13" y="21" width="54" height="38" rx="3"/>
+        <path d="M15 24l25 20 25-20"/>
+        <path d="M15 56l18-17M65 56L47 39"/>
+      </g>
+    </svg>
+  </a>
+</div>
+
+
+
+<section class="projects">
+  <article class="card feature">
+    <div class="visual robot-visual" aria-label="Abstract robot placeholder">
+      <div class="machine"><span></span><span></span></div>
+    </div>
+    <div class="copy">
+      <p class="kind">robot</p>
+      <h2>The CEO Machine</h2>
+      <p>A small wooden machine announces its occupation and leaves the scene.</p>
+      <div class="meta">ESP32-C3 · WOOD · 8 KHZ WAV · 2026</div>
+    </div>
+  </article>
+
+  <article class="card sound">
+    <div class="copy">
+      <p class="kind">music</p>
+      <h2>Kitchen Motor, Slowed Down</h2>
+      <div class="wave" aria-hidden="true">
+        <i style="--h:18%"></i><i style="--h:45%"></i><i style="--h:72%"></i><i style="--h:32%"></i>
+        <i style="--h:91%"></i><i style="--h:54%"></i><i style="--h:82%"></i><i style="--h:27%"></i>
+        <i style="--h:62%"></i><i style="--h:38%"></i><i style="--h:94%"></i><i style="--h:46%"></i>
+      </div>
+      <button type="button" onclick="this.textContent=this.textContent.includes('play')?'pause 00:17':'play 01:12'">play 01:12</button>
+      <div class="meta">FIELD RECORDING · 01:12</div>
+    </div>
+  </article>
+
+  <article class="card poem">
+    <div class="copy">
+      <p class="kind">poetry</p>
+      <h2>Four Notes About Doorbells</h2>
+      <p class="excerpt">A doorbell is a tiny public performance made for one unwilling listener.</p>
+      <div class="meta">9 LINES · JULY 2026</div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="copy">
+      <p class="kind">music</p>
+      <h2>Birds Through Wood</h2>
+      <p>Field recordings played through a badly fixed speaker attached to pine.</p>
+      <div class="meta">SOUND OBJECT · 2026</div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="copy">
+      <p class="kind">video</p>
+      <h2>Two Figures Passing</h2>
+      <p>A short scene involving one statement, one silence and an exit to the right.</p>
+      <div class="meta">00:23 · LOOP</div>
+    </div>
+  </article>
+</section>
+<footer>bydomingo.com</footer></div></body>
+</html>

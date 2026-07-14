@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+
+export async function getStaticPaths() {
+  const names = ['poetry','robots','music','video'] as const;
+  const results = [];
+  for (const collection of names) {
+    const items = await getCollection(collection, ({data}) => !data.draft);
+    for (const item of items) results.push({ params: { collection, slug: item.id.replace(/\.(md|mdx)$/,'') }, props: { item, collection } });
+  }
+  return results;
+}
+const { item, collection } = Astro.props;
+const { Content } = await render(item);
+const d = item.data;
+---
+<Base title={d.title} description={d.summary}>
+  <Header />
+  <a class="back" href={`/${collection}/`}>← {collection}</a>
+  <article class="entry">
+    <p class="kind">{collection}</p><h1 class="page-title">{d.title}</h1><p class="lead">{d.summary}</p>
+    {d.image && <img class="entry-media" src={d.image} alt="" />}
+    {d.audio && <audio class="entry-media" controls src={d.audio}></audio>}
+    {d.video && (d.video.startsWith('http') ? <p><a href={d.video} target="_blank">Open video ↗</a></p> : <video class="entry-media" controls src={d.video}></video>)}
+    <div class="entry-body"><Content /></div>
+  </article>
+</Base>

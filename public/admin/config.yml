@@ -1,0 +1,90 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+publish_mode: simple
+media_folder: public/uploads
+public_folder: /uploads
+site_url: https://bydomingo.com
+display_url: https://bydomingo.com
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: poetry
+    label: Poetry
+    label_singular: Poem
+    folder: src/content/poetry
+    create: true
+    extension: md
+    format: frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Short description, name: summary, widget: text }
+      - { label: Main image, name: image, widget: image, required: false }
+      - { label: Box size, name: size, widget: select, options: [small, medium, large, wide], default: medium }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Poem, name: body, widget: markdown }
+
+  - name: robots
+    label: Robots
+    label_singular: Robot
+    folder: src/content/robots
+    create: true
+    extension: md
+    format: frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Short description, name: summary, widget: text }
+      - { label: Main image, name: image, widget: image, required: false }
+      - { label: Materials, name: materials, widget: string, required: false }
+      - { label: Status, name: status, widget: string, required: false }
+      - { label: Video URL or uploaded file, name: video, widget: string, required: false }
+      - { label: Box size, name: size, widget: select, options: [small, medium, large, wide], default: large }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Full notes, name: body, widget: markdown }
+
+  - name: music
+    label: Music
+    label_singular: Music piece
+    folder: src/content/music
+    create: true
+    extension: md
+    format: frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Short description, name: summary, widget: text }
+      - { label: Cover image, name: image, widget: image, required: false }
+      - { label: Audio file, name: audio, widget: file, required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Box size, name: size, widget: select, options: [small, medium, large, wide], default: medium }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Notes, name: body, widget: markdown }
+
+  - name: video
+    label: Video
+    label_singular: Video
+    folder: src/content/video
+    create: true
+    extension: md
+    format: frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Short description, name: summary, widget: text }
+      - { label: Thumbnail, name: image, widget: image, required: false }
+      - { label: Video URL or uploaded file, name: video, widget: string, required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Box size, name: size, widget: select, options: [small, medium, large, wide], default: wide }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Notes, name: body, widget: markdown }
