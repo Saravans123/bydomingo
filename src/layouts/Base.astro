@@ -1,0 +1,440 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'bydomingo',
+  description = 'Poetry, electronics and audio by Domingo.'
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} />
+  <title>{title === 'bydomingo' ? title : `${title} — bydomingo`}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,550;0,600;1,400;1,550&display=swap"
+    rel="stylesheet"
+  />
+
+  <style is:global>
+    :root {
+      --cream: #f4f0e6;
+      --cream-light: #faf8f2;
+      --black: #171717;
+      --muted: #69665f;
+      --pink: #efc7dc;
+      --purple: #d7cdef;
+      --line: 1.5px solid var(--black);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--black);
+      font-family: "Crimson Pro", Georgia, serif;
+      font-weight: 500;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .wrap {
+      width: min(100% - 28px, 980px);
+      margin: 0 auto;
+      padding: 42px 0 90px;
+    }
+
+    .site-header {
+      position: relative;
+      padding: 18px 0 30px;
+      text-align: center;
+    }
+
+    .site-title {
+      color: inherit;
+      text-decoration: none;
+      font-size: clamp(34px, 5vw, 49px);
+      line-height: 1;
+      font-weight: 550;
+      letter-spacing: -0.045em;
+    }
+
+    .filter-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 23px;
+    }
+
+    .filter-button,
+    .contact-link {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: var(--black);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .filter-button svg,
+    .contact-link svg {
+      width: 31px;
+      height: 31px;
+      display: block;
+      transition: transform 130ms ease;
+    }
+
+    .filter-button:hover svg,
+    .contact-link:hover svg {
+      transform: translateY(-2px);
+    }
+
+    .filter-button.is-active::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      z-index: -1;
+      border-radius: 47% 53% 55% 45%;
+      background: var(--purple);
+      transform: rotate(-7deg);
+    }
+
+    .filter-button:nth-child(1).is-active::before {
+      background: var(--pink);
+      transform: rotate(8deg);
+    }
+
+    .contact-link {
+      margin-left: 15px;
+    }
+
+    .contact-link::after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      right: 1px;
+      top: 2px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .projects {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .post {
+      position: relative;
+      border: var(--line);
+      background: var(--cream-light);
+    }
+
+    .post:nth-child(4n + 1)::before {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 18px;
+      right: 17px;
+      top: -7px;
+      background: var(--pink);
+      transform: rotate(11deg);
+      z-index: 2;
+    }
+
+    .post:nth-child(5n + 2)::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      left: -4px;
+      bottom: 21px;
+      background: var(--purple);
+      border-radius: 50%;
+    }
+
+    .post-summary {
+      position: relative;
+      min-height: 190px;
+      padding: clamp(25px, 4vw, 42px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 240px);
+      gap: 28px;
+      align-items: stretch;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .post-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .post:not(:has(.preview-image-wrap)) .post-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .post-preview {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .post-kind {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .post h2 {
+      max-width: 760px;
+      margin: 0 0 13px;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 0.96;
+      font-weight: 550;
+      letter-spacing: -0.035em;
+    }
+
+    .post-intro {
+      max-width: 650px;
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 23px);
+      line-height: 1.26;
+      font-weight: 500;
+    }
+
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin-top: auto;
+      padding-top: 25px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.045em;
+    }
+
+    .preview-image-wrap {
+      min-height: 150px;
+      overflow: hidden;
+      border-left: var(--line);
+      padding-left: 28px;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+      object-fit: cover;
+      filter: saturate(0.82) contrast(0.97);
+    }
+
+    .expand-mark {
+      position: absolute;
+      right: 16px;
+      bottom: 14px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .expand-mark::before,
+    .expand-mark::after {
+      content: "";
+      position: absolute;
+      background: var(--black);
+    }
+
+    .expand-mark::before {
+      width: 16px;
+      height: 1.5px;
+      top: 7px;
+      left: 0;
+    }
+
+    .expand-mark::after {
+      width: 1.5px;
+      height: 16px;
+      top: 0;
+      left: 7px;
+      transition: transform 140ms ease;
+    }
+
+    .post[open] .expand-mark::after {
+      transform: rotate(90deg);
+    }
+
+    .post[open] .post-summary {
+      border-bottom: var(--line);
+    }
+
+    .post-expanded {
+      padding: clamp(27px, 5vw, 58px);
+      animation: reveal 180ms ease-out;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .post-body {
+      max-width: 720px;
+      margin: 0 auto;
+      font-size: clamp(21px, 2.7vw, 27px);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .post-body p,
+    .post-body ul,
+    .post-body ol,
+    .post-body blockquote {
+      margin: 0 0 1em;
+    }
+
+    .post-body h2,
+    .post-body h3 {
+      margin-top: 1.5em;
+      font-weight: 600;
+    }
+
+    .post-body blockquote {
+      margin-left: 0;
+      padding-left: 22px;
+      border-left: 5px solid var(--pink);
+      font-style: italic;
+    }
+
+    .post-body a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .expanded-image,
+    .entry-media {
+      width: 100%;
+      max-height: 680px;
+      margin: 0 auto 38px;
+      object-fit: contain;
+    }
+
+    audio.entry-media {
+      max-width: 720px;
+      height: 42px;
+    }
+
+    .post-poetry[open] {
+      box-shadow: 7px 7px 0 var(--pink);
+    }
+
+    .post-robots[open] {
+      box-shadow: 7px 7px 0 var(--purple);
+    }
+
+    .post-music[open] {
+      box-shadow: -7px 7px 0 var(--pink);
+    }
+
+    @media (max-width: 680px) {
+      .wrap {
+        width: min(100% - 18px, 980px);
+        padding-top: 25px;
+      }
+
+      .site-header {
+        padding-bottom: 22px;
+      }
+
+      .filter-nav {
+        margin-top: 17px;
+      }
+
+      .post-summary {
+        min-height: 170px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px 22px 31px;
+      }
+
+      .preview-image-wrap {
+        min-height: 190px;
+        max-height: 310px;
+        border-left: 0;
+        border-top: var(--line);
+        padding: 20px 0 0;
+      }
+
+      .preview-image {
+        min-height: 190px;
+        max-height: 290px;
+      }
+
+      .post h2 {
+        font-size: clamp(35px, 12vw, 50px);
+      }
+
+      .post-expanded {
+        padding: 28px 22px 38px;
+      }
+
+      .post-body {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <slot />
+  </div>
+</body>
+</html>
