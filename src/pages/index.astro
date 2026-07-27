@@ -1,0 +1,67 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Card from '../components/Card.astro';
+
+const names = ['poetry', 'robots', 'music'] as const;
+
+const groups = await Promise.all(
+  names.map(async (collection) => ({
+    collection,
+    items: await getCollection(collection, ({ data }) => !data.draft)
+  }))
+);
+
+const sorted = groups
+  .flatMap((group) =>
+    group.items.map((item) => ({
+      item,
+      collection: group.collection
+    }))
+  )
+  .sort((a, b) => b.item.data.date.valueOf() - a.item.data.date.valueOf());
+
+const posts = await Promise.all(
+  sorted.map(async ({ item, collection }) => {
+    const { Content } = await render(item);
+    return { item, collection, Content };
+  })
+);
+---
+
+<Base>
+  <Header />
+
+  <main class="projects" id="projects">
+    {posts.map(({ item, collection, Content }) => (
+      <Card item={item} collection={collection} Content={Content} />
+    ))}
+  </main>
+</Base>
+
+<script>
+  const buttons = Array.from(document.querySelectorAll('[data-filter]'));
+  const cards = Array.from(document.querySelectorAll('[data-category]'));
+
+  function setFilter(filter) {
+    buttons.forEach((button) => {
+      const active = button.dataset.filter === filter;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    cards.forEach((card) => {
+      const visible = filter === 'all' || card.dataset.category === filter;
+      card.hidden = !visible;
+    });
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter || 'all';
+      const alreadyActive = button.classList.contains('is-active');
+      setFilter(alreadyActive ? 'all' : filter);
+    });
+  });
+</script>
