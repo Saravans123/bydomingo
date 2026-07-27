@@ -5,59 +5,60 @@ interface Props {
   Content: any;
 }
 
-const { item, collection, Content } = Astro.props;
-const d = item.data;
+const {
+  item,
+  collection,
+  Content
+} = Astro.props;
 
-const labels = {
-  poetry: 'poetry',
-  robots: 'electronics',
-  music: 'audio'
-};
-
-const date = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric'
-}).format(d.date);
+const data = item.data;
 ---
 
-<details class={`post post-${collection}`} data-category={collection}>
+<details
+  class="post"
+  data-category={collection}
+>
   <summary class="post-summary">
-    <div class="post-preview">
-      <p class="post-kind">{labels[collection]}</p>
-      <h2>{d.title}</h2>
-      {d.summary && <p class="post-intro">{d.summary}</p>}
-      <div class="post-meta">
-        <span>{date}</span>
-        {d.duration && <span>{d.duration}</span>}
-        {d.status && <span>{d.status}</span>}
-      </div>
-    </div>
+    <h2>{data.title}</h2>
 
-    {d.image && (
-      <div class="preview-image-wrap">
-        <img class="preview-image" src={d.image} alt="" loading="lazy" />
-      </div>
-    )}
-
-    <span class="expand-mark" aria-hidden="true"></span>
+    <span
+      class="expand-mark"
+      aria-hidden="true"
+    ></span>
   </summary>
 
   <div class="post-expanded">
-    {d.image && (
-      <img class="expanded-image" src={d.image} alt="" loading="lazy" />
+    {data.image && (
+      <img
+        class="entry-image"
+        src={data.image}
+        alt={data.title}
+        loading="lazy"
+      />
     )}
 
-    {d.audio && (
-      <audio class="entry-media" controls preload="metadata" src={d.audio}></audio>
+    {data.audio && (
+      <audio
+        class="entry-audio"
+        controls
+        preload="metadata"
+        src={data.audio}
+      ></audio>
     )}
 
-    {d.video && (
-      <video class="entry-media" controls preload="metadata" src={d.video}></video>
+    {data.video && (
+      <video
+        class="entry-video"
+        controls
+        preload="metadata"
+        src={data.video}
+      ></video>
     )}
 
-    <div class="post-body">
-      <Content />
-    </div>
+    {Content && (
+      <div class="post-body">
+        <Content />
+      </div>
+    )}
   </div>
 </details>

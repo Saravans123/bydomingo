@@ -9,7 +9,10 @@ const names = ['poetry', 'robots', 'music'] as const;
 const groups = await Promise.all(
   names.map(async (collection) => ({
     collection,
-    items: await getCollection(collection, ({ data }) => !data.draft)
+    items: await getCollection(
+      collection,
+      ({ data }) => !data.draft
+    )
   }))
 );
 
@@ -20,12 +23,21 @@ const sorted = groups
       collection: group.collection
     }))
   )
-  .sort((a, b) => b.item.data.date.valueOf() - a.item.data.date.valueOf());
+  .sort(
+    (a, b) =>
+      b.item.data.date.valueOf() -
+      a.item.data.date.valueOf()
+  );
 
 const posts = await Promise.all(
   sorted.map(async ({ item, collection }) => {
     const { Content } = await render(item);
-    return { item, collection, Content };
+
+    return {
+      item,
+      collection,
+      Content
+    };
   })
 );
 ---
@@ -35,33 +47,170 @@ const posts = await Promise.all(
 
   <main class="projects" id="projects">
     {posts.map(({ item, collection, Content }) => (
-      <Card item={item} collection={collection} Content={Content} />
+      <Card
+        item={item}
+        collection={collection}
+        Content={Content}
+      />
     ))}
   </main>
 </Base>
 
-<script>
-  const buttons = Array.from(document.querySelectorAll('[data-filter]'));
-  const cards = Array.from(document.querySelectorAll('[data-category]'));
+<script is:inline>
+  const buttons = Array.from(
+    document.querySelectorAll('[data-filter]')
+  );
+
+  const cards = Array.from(
+    document.querySelectorAll('[data-category]')
+  );
 
   function setFilter(filter) {
     buttons.forEach((button) => {
-      const active = button.dataset.filter === filter;
-      button.classList.toggle('is-active', active);
-      button.setAttribute('aria-pressed', String(active));
+      const active =
+        button.dataset.filter === filter;
+
+      button.classList.toggle(
+        'is-active',
+        active
+      );
+
+      button.setAttribute(
+        'aria-pressed',
+        String(active)
+      );
     });
 
     cards.forEach((card) => {
-      const visible = filter === 'all' || card.dataset.category === filter;
+      const visible =
+        filter === 'all' ||
+        card.dataset.category === filter;
+
       card.hidden = !visible;
     });
   }
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
-      const filter = button.dataset.filter || 'all';
-      const alreadyActive = button.classList.contains('is-active');
-      setFilter(alreadyActive ? 'all' : filter);
+      const filter =
+        button.dataset.filter || 'all';
+
+      const alreadyActive =
+        button.classList.contains(
+          'is-active'
+        );
+
+      setFilter(
+        alreadyActive
+          ? 'all'
+          : filter
+      );
     });
   });
+
+  function colourSpecialLetters() {
+    const pastelColours = [
+      '#d781ac',
+      '#b89ad9',
+      '#8fb9d4',
+      '#86c8bd',
+      '#99c58f',
+      '#d8c778',
+      '#e7ad7d',
+      '#d99a98'
+    ];
+
+    const walker =
+      document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT
+      );
+
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const parent = node.parentElement;
+      const text = node.textContent || '';
+
+      if (
+        parent &&
+        /g/i.test(text) &&
+        !parent.closest(
+          [
+            'script',
+            'style',
+            'svg',
+            'audio',
+            'video',
+            'input',
+            'textarea',
+            '.special-letter'
+          ].join(',')
+        )
+      ) {
+        textNodes.push(node);
+      }
+    }
+
+    textNodes.forEach((node) => {
+      const fragment =
+        document.createDocumentFragment();
+
+      const text =
+        node.textContent || '';
+
+      const isHeaderTitle =
+        Boolean(
+          node.parentElement?.closest(
+            '.site-title'
+          )
+        );
+
+      for (const character of text) {
+        if (
+          character.toLowerCase() === 'g'
+        ) {
+          const span =
+            document.createElement('span');
+
+          span.className =
+            'special-letter letter-g';
+
+          if (isHeaderTitle) {
+            span.classList.add(
+              'letter-g-header'
+            );
+          } else {
+            const randomIndex =
+              Math.floor(
+                Math.random() *
+                pastelColours.length
+              );
+
+            span.style.color =
+              pastelColours[randomIndex];
+          }
+
+          span.textContent =
+            character;
+
+          fragment.appendChild(span);
+        } else {
+          fragment.appendChild(
+            document.createTextNode(
+              character
+            )
+          );
+        }
+      }
+
+      node.parentNode?.replaceChild(
+        fragment,
+        node
+      );
+    });
+  }
+
+  colourSpecialLetters();
 </script>
