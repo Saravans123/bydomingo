@@ -1,0 +1,63 @@
+---
+interface Props {
+  item: any;
+  collection: 'poetry' | 'robots' | 'music';
+  Content: any;
+}
+
+const { item, collection, Content } = Astro.props;
+const d = item.data;
+
+const labels = {
+  poetry: 'poetry',
+  robots: 'electronics',
+  music: 'audio'
+};
+
+const date = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric'
+}).format(d.date);
+---
+
+<details class={`post post-${collection}`} data-category={collection}>
+  <summary class="post-summary">
+    <div class="post-preview">
+      <p class="post-kind">{labels[collection]}</p>
+      <h2>{d.title}</h2>
+      {d.summary && <p class="post-intro">{d.summary}</p>}
+      <div class="post-meta">
+        <span>{date}</span>
+        {d.duration && <span>{d.duration}</span>}
+        {d.status && <span>{d.status}</span>}
+      </div>
+    </div>
+
+    {d.image && (
+      <div class="preview-image-wrap">
+        <img class="preview-image" src={d.image} alt="" loading="lazy" />
+      </div>
+    )}
+
+    <span class="expand-mark" aria-hidden="true"></span>
+  </summary>
+
+  <div class="post-expanded">
+    {d.image && (
+      <img class="expanded-image" src={d.image} alt="" loading="lazy" />
+    )}
+
+    {d.audio && (
+      <audio class="entry-media" controls preload="metadata" src={d.audio}></audio>
+    )}
+
+    {d.video && (
+      <video class="entry-media" controls preload="metadata" src={d.video}></video>
+    )}
+
+    <div class="post-body">
+      <Content />
+    </div>
+  </div>
+</details>
