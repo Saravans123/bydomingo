@@ -1,21 +1,16 @@
 ---
-title: oleoelole
+title: Some music sometime
 date: 2026-07-28
-summary: acadc
+summary: WHEN I GO OUT AND I SEE THIS AND THAT I DON'T KNOW IT IS OK
 image: /uploads/borja.jpeg
 draft: false
 blocks:
   - type: text
     alignment: center
-    text: adfasfvarv
-  - type: image
-    size: small
-    alignment: right
-    src: /uploads/borja.jpeg
-    caption: sdvsfvsfv
-  - type: text
-    alignment: left
-    text: "dvasdvaerfavsfv asf "
+    text: |-
+      CADA DÍA MÁS PERFECTO
+      CADA DÍA MÁS PERFECTO
+      CADA DÍA MÁS PERFECTO
 ---
 smcosdnvascdwcn kamxcnaoi.anskcw
 
