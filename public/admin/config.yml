@@ -4,7 +4,6 @@ backend:
   branch: main
 
 local_backend: true
-
 publish_mode: simple
 
 media_folder: "public/uploads"
@@ -28,9 +27,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
-      - label: Title
-        name: title
-        widget: string
+      - { label: Title, name: title, widget: string }
 
       - label: Date
         name: date
@@ -43,19 +40,135 @@ collections:
         widget: text
         required: false
 
-      - label: Main image
-        name: image
-        widget: image
-        required: false
-
       - label: Draft
         name: draft
         widget: boolean
         default: false
 
-      - label: Poem
-        name: body
-        widget: markdown
+      - label: Content
+        name: blocks
+        widget: list
+        required: false
+        typeKey: type
+        summary: "{{type}}"
+        types:
+          - label: Text
+            name: text
+            widget: object
+            fields:
+              - label: Text
+                name: text
+                widget: text
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: left
+
+          - label: Image
+            name: image
+            widget: object
+            fields:
+              - label: Image
+                name: src
+                widget: image
+
+              - label: Alternative text
+                name: alt
+                widget: string
+                required: false
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: medium
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - label: Caption
+                name: caption
+                widget: string
+                required: false
+
+          - label: Audio
+            name: audio
+            widget: object
+            fields:
+              - label: Audio file
+                name: src
+                widget: file
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - label: Caption
+                name: caption
+                widget: string
+                required: false
+
+          - label: Video
+            name: video
+            widget: object
+            fields:
+              - label: Video file
+                name: src
+                widget: file
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - label: Caption
+                name: caption
+                widget: string
+                required: false
 
   - name: robots
     label: Robots
@@ -67,9 +180,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
-      - label: Title
-        name: title
-        widget: string
+      - { label: Title, name: title, widget: string }
 
       - label: Date
         name: date
@@ -82,34 +193,114 @@ collections:
         widget: text
         required: false
 
-      - label: Main image
-        name: image
-        widget: image
-        required: false
-
-      - label: Materials
-        name: materials
-        widget: string
-        required: false
-
-      - label: Status
-        name: status
-        widget: string
-        required: false
-
-      - label: Video URL
-        name: video
-        widget: string
-        required: false
-
       - label: Draft
         name: draft
         widget: boolean
         default: false
 
-      - label: Full notes
-        name: body
-        widget: markdown
+      - label: Content
+        name: blocks
+        widget: list
+        required: false
+        typeKey: type
+        summary: "{{type}}"
+        types:
+          - label: Text
+            name: text
+            widget: object
+            fields:
+              - { label: Text, name: text, widget: text }
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: left
+
+          - label: Image
+            name: image
+            widget: object
+            fields:
+              - { label: Image, name: src, widget: image }
+              - { label: Alternative text, name: alt, widget: string, required: false }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: medium
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Audio
+            name: audio
+            widget: object
+            fields:
+              - { label: Audio file, name: src, widget: file }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Video
+            name: video
+            widget: object
+            fields:
+              - { label: Video file, name: src, widget: file }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
 
   - name: music
     label: Music
@@ -121,9 +312,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
-      - label: Title
-        name: title
-        widget: string
+      - { label: Title, name: title, widget: string }
 
       - label: Date
         name: date
@@ -136,26 +325,111 @@ collections:
         widget: text
         required: false
 
-      - label: Cover image
-        name: image
-        widget: image
-        required: false
-
-      - label: Audio file
-        name: audio
-        widget: file
-        required: false
-
-      - label: Duration
-        name: duration
-        widget: string
-        required: false
-
       - label: Draft
         name: draft
         widget: boolean
         default: false
 
-      - label: Notes
-        name: body
-        widget: markdown
+      - label: Content
+        name: blocks
+        widget: list
+        required: false
+        typeKey: type
+        summary: "{{type}}"
+        types:
+          - label: Text
+            name: text
+            widget: object
+            fields:
+              - { label: Text, name: text, widget: text }
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: left
+
+          - label: Image
+            name: image
+            widget: object
+            fields:
+              - { label: Image, name: src, widget: image }
+              - { label: Alternative text, name: alt, widget: string, required: false }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: medium
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Audio
+            name: audio
+            widget: object
+            fields:
+              - { label: Audio file, name: src, widget: file }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Video
+            name: video
+            widget: object
+            fields:
+              - { label: Video file, name: src, widget: file }
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Medium, value: medium }
+                  - { label: Large, value: large }
+                  - { label: Full width, value: full }
+                default: large
+
+              - label: Alignment
+                name: alignment
+                widget: select
+                options:
+                  - { label: Left, value: left }
+                  - { label: Centre, value: center }
+                  - { label: Right, value: right }
+                default: center
+
+              - { label: Caption, name: caption, widget: string, required: false }
