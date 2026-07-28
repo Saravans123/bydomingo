@@ -50,10 +50,6 @@ const {
       rel="stylesheet"
     />
 
-    <script
-      src="https://identity.netlify.com/v1/netlify-identity-widget.js"
-    ></script>
-
     <style is:global>
       :root {
         --cream: #f5f1e7;
@@ -460,29 +456,5 @@ const {
     <div class="wrap">
       <slot />
     </div>
-
-    <script is:inline>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', (user) => {
-          const hash = window.location.hash;
-
-          const isIdentityLink =
-            hash.includes('invite_token=') ||
-            hash.includes('confirmation_token=') ||
-            hash.includes('recovery_token=') ||
-            hash.includes('email_change_token=');
-
-          if (isIdentityLink) {
-            window.netlifyIdentity.open();
-          }
-
-          if (!user) {
-            window.netlifyIdentity.on('login', () => {
-              window.location.href = '/admin/';
-            });
-          }
-        });
-      }
-    </script>
   </body>
 </html>

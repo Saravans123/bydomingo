@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: Saravans123/bydomingo
   branch: main
 
 local_backend: true
