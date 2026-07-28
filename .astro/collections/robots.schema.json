@@ -10,14 +10,167 @@
       "format": "date-time"
     },
     "summary": {
+      "default": "",
       "type": "string"
     },
-    "featured": {
+    "draft": {
       "default": false,
       "type": "boolean"
     },
+    "blocks": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "text": {
+                "type": "string"
+              },
+              "alignment": {
+                "default": "left",
+                "type": "string",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "image"
+              },
+              "src": {
+                "type": "string"
+              },
+              "alt": {
+                "type": "string"
+              },
+              "caption": {
+                "type": "string"
+              },
+              "size": {
+                "default": "medium",
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large",
+                  "full"
+                ]
+              },
+              "alignment": {
+                "default": "center",
+                "type": "string",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "src"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "audio"
+              },
+              "src": {
+                "type": "string"
+              },
+              "caption": {
+                "type": "string"
+              },
+              "size": {
+                "default": "large",
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large",
+                  "full"
+                ]
+              },
+              "alignment": {
+                "default": "center",
+                "type": "string",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "src"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "video"
+              },
+              "src": {
+                "type": "string"
+              },
+              "caption": {
+                "type": "string"
+              },
+              "size": {
+                "default": "large",
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large",
+                  "full"
+                ]
+              },
+              "alignment": {
+                "default": "center",
+                "type": "string",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "src"
+            ]
+          }
+        ]
+      }
+    },
+    "featured": {
+      "type": "boolean"
+    },
     "size": {
-      "default": "medium",
       "type": "string",
       "enum": [
         "small",
@@ -29,17 +182,19 @@
     "image": {
       "type": "string"
     },
-    "draft": {
-      "default": false,
-      "type": "boolean"
+    "audio": {
+      "type": "string"
+    },
+    "video": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
     },
     "materials": {
       "type": "string"
     },
     "status": {
-      "type": "string"
-    },
-    "video": {
       "type": "string"
     },
     "$schema": {
@@ -48,7 +203,6 @@
   },
   "required": [
     "title",
-    "date",
-    "summary"
+    "date"
   ]
 }

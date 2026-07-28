@@ -159,14 +159,6 @@ declare module 'astro:content' {
   rendered?: RenderedContent;
   filePath?: string;
 }>;
-"video": Record<string, {
-  id: string;
-  body?: string;
-  collection: "video";
-  data: InferEntrySchema<"video">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
 
 	};
 
