@@ -1,3 +1,4 @@
+
 backend:
   name: github
   repo: Saravans123/bydomingo
@@ -17,28 +18,25 @@ slug:
   clean_accents: true
 
 collections:
-  - name: poetry
-    label: Poetry
-    label_singular: Poem
-    folder: "src/content/poetry"
+  - name: posts
+    label: Posts
+    label_singular: Post
+    folder: "src/content/posts"
     create: true
     extension: md
     format: frontmatter
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
-      - { label: Title, name: title, widget: string }
+      - label: Title
+        name: title
+        widget: string
 
       - label: Date
         name: date
         widget: datetime
         date_format: "YYYY-MM-DD"
         time_format: false
-
-      - label: Short description
-        name: summary
-        widget: text
-        required: false
 
       - label: Draft
         name: draft
@@ -51,6 +49,7 @@ collections:
         required: false
         typeKey: type
         summary: "{{type}}"
+
         types:
           - label: Text
             name: text
@@ -59,6 +58,15 @@ collections:
               - label: Text
                 name: text
                 widget: text
+
+              - label: Size
+                name: size
+                widget: select
+                options:
+                  - { label: Small, value: small }
+                  - { label: Normal, value: normal }
+                  - { label: Large, value: large }
+                default: normal
 
               - label: Alignment
                 name: alignment
@@ -169,267 +177,3 @@ collections:
                 name: caption
                 widget: string
                 required: false
-
-  - name: robots
-    label: Robots
-    label_singular: Robot
-    folder: "src/content/robots"
-    create: true
-    extension: md
-    format: frontmatter
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-
-    fields:
-      - { label: Title, name: title, widget: string }
-
-      - label: Date
-        name: date
-        widget: datetime
-        date_format: "YYYY-MM-DD"
-        time_format: false
-
-      - label: Short description
-        name: summary
-        widget: text
-        required: false
-
-      - label: Draft
-        name: draft
-        widget: boolean
-        default: false
-
-      - label: Content
-        name: blocks
-        widget: list
-        required: false
-        typeKey: type
-        summary: "{{type}}"
-        types:
-          - label: Text
-            name: text
-            widget: object
-            fields:
-              - { label: Text, name: text, widget: text }
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: left
-
-          - label: Image
-            name: image
-            widget: object
-            fields:
-              - { label: Image, name: src, widget: image }
-              - { label: Alternative text, name: alt, widget: string, required: false }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: medium
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }
-
-          - label: Audio
-            name: audio
-            widget: object
-            fields:
-              - { label: Audio file, name: src, widget: file }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: large
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }
-
-          - label: Video
-            name: video
-            widget: object
-            fields:
-              - { label: Video file, name: src, widget: file }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: large
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }
-
-  - name: music
-    label: Music
-    label_singular: Music piece
-    folder: "src/content/music"
-    create: true
-    extension: md
-    format: frontmatter
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-
-    fields:
-      - { label: Title, name: title, widget: string }
-
-      - label: Date
-        name: date
-        widget: datetime
-        date_format: "YYYY-MM-DD"
-        time_format: false
-
-      - label: Short description
-        name: summary
-        widget: text
-        required: false
-
-      - label: Draft
-        name: draft
-        widget: boolean
-        default: false
-
-      - label: Content
-        name: blocks
-        widget: list
-        required: false
-        typeKey: type
-        summary: "{{type}}"
-        types:
-          - label: Text
-            name: text
-            widget: object
-            fields:
-              - { label: Text, name: text, widget: text }
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: left
-
-          - label: Image
-            name: image
-            widget: object
-            fields:
-              - { label: Image, name: src, widget: image }
-              - { label: Alternative text, name: alt, widget: string, required: false }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: medium
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }
-
-          - label: Audio
-            name: audio
-            widget: object
-            fields:
-              - { label: Audio file, name: src, widget: file }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: large
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }
-
-          - label: Video
-            name: video
-            widget: object
-            fields:
-              - { label: Video file, name: src, widget: file }
-
-              - label: Size
-                name: size
-                widget: select
-                options:
-                  - { label: Small, value: small }
-                  - { label: Medium, value: medium }
-                  - { label: Large, value: large }
-                  - { label: Full width, value: full }
-                default: large
-
-              - label: Alignment
-                name: alignment
-                widget: select
-                options:
-                  - { label: Left, value: left }
-                  - { label: Centre, value: center }
-                  - { label: Right, value: right }
-                default: center
-
-              - { label: Caption, name: caption, widget: string, required: false }

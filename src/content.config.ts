@@ -1,20 +1,28 @@
+
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// Alignment options
 const alignment = z
   .enum(['left', 'center', 'right'])
   .default('left');
 
+// Media sizes
 const mediaSize = z
   .enum(['small', 'medium', 'large', 'full'])
   .default('medium');
 
+// Text block
 const textBlock = z.object({
   type: z.literal('text'),
   text: z.string(),
+  size: z
+    .enum(['small', 'normal', 'large'])
+    .default('normal'),
   alignment
 });
 
+// Image block
 const imageBlock = z.object({
   type: z.literal('image'),
   src: z.string(),
@@ -24,6 +32,7 @@ const imageBlock = z.object({
   alignment: alignment.default('center')
 });
 
+// Audio block
 const audioBlock = z.object({
   type: z.literal('audio'),
   src: z.string(),
@@ -32,6 +41,7 @@ const audioBlock = z.object({
   alignment: alignment.default('center')
 });
 
+// Video block
 const videoBlock = z.object({
   type: z.literal('video'),
   src: z.string(),
@@ -40,6 +50,7 @@ const videoBlock = z.object({
   alignment: alignment.default('center')
 });
 
+// All available block types
 const block = z.discriminatedUnion('type', [
   textBlock,
   imageBlock,
@@ -47,58 +58,23 @@ const block = z.discriminatedUnion('type', [
   videoBlock
 ]);
 
-const commonSchema = z.object({
+// Universal post schema
+const postSchema = z.object({
   title: z.string(),
   date: z.coerce.date(),
-  summary: z.string().optional().default(''),
   draft: z.boolean().default(false),
-
-  blocks: z.array(block).optional().default([]),
-
-  /*
-   * Old fields remain optional so your existing posts
-   * do not break during the transition.
-   */
-  featured: z.boolean().optional(),
-  size: z
-    .enum(['small', 'medium', 'large', 'wide'])
-    .optional(),
-
-  image: z.string().optional(),
-  audio: z.string().optional(),
-  video: z.string().optional(),
-
-  duration: z.string().optional(),
-  materials: z.string().optional(),
-  status: z.string().optional()
+  blocks: z.array(block).optional().default([])
 });
 
-const poetry = defineCollection({
+// One collection for everything
+const posts = defineCollection({
   loader: glob({
     pattern: '**/*.{md,mdx}',
-    base: './src/content/poetry'
+    base: './src/content/posts'
   }),
-  schema: commonSchema
-});
-
-const robots = defineCollection({
-  loader: glob({
-    pattern: '**/*.{md,mdx}',
-    base: './src/content/robots'
-  }),
-  schema: commonSchema
-});
-
-const music = defineCollection({
-  loader: glob({
-    pattern: '**/*.{md,mdx}',
-    base: './src/content/music'
-  }),
-  schema: commonSchema
+  schema: postSchema
 });
 
 export const collections = {
-  poetry,
-  robots,
-  music
+  posts
 };
