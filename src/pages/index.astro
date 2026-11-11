@@ -17,6 +17,7 @@ const posts = (await getCollection('posts'))
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+
     <title>bydomingo</title>
 
     <link
@@ -73,7 +74,7 @@ const posts = (await getCollection('posts'))
         border-top: 1px solid #383838;
       }
 
-      /* POST AND BACKGROUND */
+      /* POSTS */
 
       .post {
         position: relative;
@@ -82,6 +83,17 @@ const posts = (await getCollection('posts'))
         border-bottom: 1px solid #383838;
         background-color: #0d0d0d;
       }
+
+      /*
+       * BACKGROUND IMAGE
+       *
+       * The image is anchored to the top.
+       * Its size depends on the post width,
+       * not on whether the post is open.
+       *
+       * This prevents zooming or shifting
+       * during the opening animation.
+       */
 
       .post.has-background::before {
         content: "";
@@ -97,8 +109,14 @@ const posts = (await getCollection('posts'))
           ),
           var(--post-image);
 
-        background-size: cover;
-        background-position: center;
+        background-size:
+          100% 100%,
+          100% auto;
+
+        background-position:
+          top center,
+          top center;
+
         background-repeat: no-repeat;
 
         opacity: 0.6;
@@ -110,7 +128,7 @@ const posts = (await getCollection('posts'))
         z-index: 1;
       }
 
-      /* CLOSED POST TITLE */
+      /* CLOSED POST */
 
       .post summary {
         display: flex;
@@ -120,11 +138,12 @@ const posts = (await getCollection('posts'))
         padding: 15px 3px;
         cursor: pointer;
         list-style: none;
+        user-select: none;
         transition: opacity 0.2s ease;
       }
 
       .post summary:hover {
-        opacity: 0.65;
+        opacity: 0.7;
       }
 
       .post summary::-webkit-details-marker {
@@ -162,7 +181,7 @@ const posts = (await getCollection('posts'))
         content: "−";
       }
 
-      /* EXPANDED POST */
+      /* OPEN POST */
 
       .post-content {
         padding: 8px 3px 28px;
@@ -207,7 +226,7 @@ const posts = (await getCollection('posts'))
         font-size: 27px;
       }
 
-      /* IMAGES, AUDIO AND VIDEO */
+      /* IMAGES, AUDIO, VIDEO */
 
       .media-block {
         display: flex;
@@ -327,7 +346,10 @@ const posts = (await getCollection('posts'))
           <details
             class:list={[
               'post',
-              { 'has-background': !!post.data.backgroundImage }
+              {
+                'has-background':
+                  !!post.data.backgroundImage
+              }
             ]}
             style={
               post.data.backgroundImage
@@ -344,7 +366,10 @@ const posts = (await getCollection('posts'))
                 {post.data.title}
               </span>
 
-              <span class="symbol" aria-hidden="true"></span>
+              <span
+                class="symbol"
+                aria-hidden="true"
+              ></span>
             </summary>
 
             <div class="post-content">
@@ -432,6 +457,10 @@ const posts = (await getCollection('posts'))
     </main>
 
     <script is:inline>
+      /*
+       * COLOURED G LETTERS
+       */
+
       const colours = [
         '#d781ac',
         '#b89ad9',
@@ -475,7 +504,9 @@ const posts = (await getCollection('posts'))
               span.className = 'special-letter';
 
               span.style.color =
-                colours[Math.floor(Math.random() * colours.length)];
+                colours[Math.floor(
+                  Math.random() * colours.length
+                )];
 
               span.textContent = character;
               fragment.appendChild(span);
@@ -491,6 +522,84 @@ const posts = (await getCollection('posts'))
       }
 
       colourGs();
+
+      /*
+       * SMOOTH OPENING AND CLOSING
+       *
+       * Animate the height of the post,
+       * not the background image.
+       */
+
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      );
+
+      document.querySelectorAll('.post').forEach((post) => {
+        const summary = post.querySelector('summary');
+        const content = post.querySelector('.post-content');
+
+        if (!summary || !content) return;
+
+        let animating = false;
+
+        summary.addEventListener('click', (event) => {
+          if (reducedMotion.matches) return;
+
+          event.preventDefault();
+
+          if (animating) return;
+
+          animating = true;
+
+          const wasOpen = post.open;
+
+          const startHeight =
+            post.getBoundingClientRect().height;
+
+          // Make content measurable before animating.
+          if (!wasOpen) {
+            post.style.height = `${startHeight}px`;
+            post.open = true;
+          }
+
+          const summaryHeight = summary.offsetHeight;
+          const contentHeight = content.offsetHeight;
+
+          const endHeight = wasOpen
+            ? summaryHeight + 1
+            : summaryHeight + contentHeight + 1;
+
+          post.style.overflow = 'hidden';
+
+          const animation = post.animate(
+            [
+              { height: `${startHeight}px` },
+              { height: `${endHeight}px` }
+            ],
+            {
+              duration: 420,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              fill: 'both'
+            }
+          );
+
+          animation.onfinish = () => {
+            if (wasOpen) {
+              post.open = false;
+            }
+
+            post.style.height = '';
+            post.style.overflow = '';
+            animating = false;
+          };
+
+          animation.oncancel = () => {
+            post.style.height = '';
+            post.style.overflow = '';
+            animating = false;
+          };
+        });
+      });
     </script>
   </body>
 </html>
