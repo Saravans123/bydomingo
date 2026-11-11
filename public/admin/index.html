@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -13,5 +14,431 @@
 
   <body>
     <script src="https://unpkg.com/decap-cms@^3.8.0/dist/decap-cms.js"></script>
+
+    <script>
+      /*
+       * BYDOMINGO — LIVE POST PREVIEW
+       *
+       * Displays the contents of the post
+       * while you edit it in Decap CMS.
+       */
+
+      CMS.registerPreviewStyle(`
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap');
+
+        * {
+          box-sizing: border-box;
+        }
+
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+          background: #0d0d0d;
+          color: #f5f3ee;
+          font-family: "Crimson Pro", Georgia, serif;
+          font-size: 19px;
+        }
+
+        .bd-preview {
+          min-height: 100vh;
+          padding: 35px 5% 80px;
+          background: #0d0d0d;
+          color: #f5f3ee;
+        }
+
+        .bd-header {
+          text-align: center;
+          margin-bottom: 45px;
+        }
+
+        .bd-header h1 {
+          font-size: 48px;
+          font-weight: 400;
+          margin: 0;
+        }
+
+        .bd-pink {
+          color: #d781ac;
+        }
+
+        .bd-post {
+          position: relative;
+          isolation: isolate;
+          border-top: 1px solid #383838;
+          border-bottom: 1px solid #383838;
+          background: #0d0d0d;
+          min-height: 60px;
+        }
+
+        .bd-background {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          opacity: 0.6;
+          background-size: 100% 100%, 100% auto;
+          background-position: top center;
+          background-repeat: no-repeat;
+        }
+
+        .bd-post-inner {
+          position: relative;
+          z-index: 1;
+        }
+
+        .bd-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 20px;
+          padding: 15px 3px;
+          font-size: 21px;
+          line-height: 1.3;
+        }
+
+        .bd-symbol {
+          font-size: 21px;
+          opacity: 0.65;
+        }
+
+        .bd-content {
+          padding: 8px 3px 28px;
+          font-size: 19px;
+          line-height: 1.4;
+        }
+
+        .bd-block {
+          margin-bottom: 18px;
+          overflow-wrap: anywhere;
+        }
+
+        .bd-text {
+          white-space: pre-wrap;
+        }
+
+        .bd-small-text {
+          font-size: 16px;
+        }
+
+        .bd-normal-text {
+          font-size: 19px;
+        }
+
+        .bd-large-text {
+          font-size: 27px;
+        }
+
+        .bd-left {
+          text-align: left;
+        }
+
+        .bd-center {
+          text-align: center;
+        }
+
+        .bd-right {
+          text-align: right;
+        }
+
+        .bd-media {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .bd-media.bd-left {
+          align-items: flex-start;
+        }
+
+        .bd-media.bd-center {
+          align-items: center;
+        }
+
+        .bd-media.bd-right {
+          align-items: flex-end;
+        }
+
+        .bd-media-inner {
+          max-width: 100%;
+        }
+
+        .bd-media.bd-small .bd-media-inner {
+          width: 30%;
+        }
+
+        .bd-media.bd-medium .bd-media-inner {
+          width: 50%;
+        }
+
+        .bd-media.bd-large .bd-media-inner {
+          width: 75%;
+        }
+
+        .bd-media.bd-full .bd-media-inner {
+          width: 100%;
+        }
+
+        .bd-media img,
+        .bd-media video,
+        .bd-media audio {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .bd-caption {
+          margin-top: 7px;
+          font-size: 15px;
+          opacity: 0.65;
+        }
+
+        .bd-empty {
+          opacity: 0.5;
+          font-style: italic;
+        }
+
+        @media (max-width: 650px) {
+          .bd-media.bd-small .bd-media-inner {
+            width: 65%;
+          }
+
+          .bd-media.bd-medium .bd-media-inner,
+          .bd-media.bd-large .bd-media-inner {
+            width: 100%;
+          }
+        }
+      `, { raw: true });
+
+      /*
+       * Resolve uploaded files.
+       * Works for existing files and new uploads.
+       */
+
+      function assetURL(path, getAsset) {
+        if (!path) return "";
+
+        try {
+          const asset = getAsset(path);
+
+          if (!asset) return path;
+
+          if (typeof asset === "string") {
+            return asset;
+          }
+
+          if (typeof asset.url === "string") {
+            return asset.url;
+          }
+
+          const result = asset.toString();
+
+          return result !== "[object Object]"
+            ? result
+            : path;
+        } catch (error) {
+          return path;
+        }
+      }
+
+      /*
+       * Render one content block.
+       */
+
+      function renderBlock(block, index, getAsset) {
+        const type = block.type || "";
+        const alignment = block.alignment || "left";
+        const size = block.size || "medium";
+
+        if (type === "text") {
+          return h(
+            "div",
+            {
+              key: index,
+              className:
+                "bd-block bd-text " +
+                "bd-" + alignment + " " +
+                "bd-" + (block.size || "normal") + "-text"
+            },
+            block.text || ""
+          );
+        }
+
+        if (
+          type === "image" ||
+          type === "audio" ||
+          type === "video"
+        ) {
+          const src = assetURL(block.src, getAsset);
+
+          let media;
+
+          if (type === "image") {
+            media = h("img", {
+              src: src,
+              alt: block.alt || ""
+            });
+          }
+
+          if (type === "audio") {
+            media = h("audio", {
+              src: src,
+              controls: true,
+              preload: "none"
+            });
+          }
+
+          if (type === "video") {
+            media = h("video", {
+              src: src,
+              controls: true,
+              preload: "metadata"
+            });
+          }
+
+          return h(
+            "div",
+            {
+              key: index,
+              className:
+                "bd-block bd-media " +
+                "bd-" + alignment + " " +
+                "bd-" + size
+            },
+            h(
+              "div",
+              { className: "bd-media-inner" },
+              media,
+              block.caption
+                ? h(
+                    "div",
+                    { className: "bd-caption" },
+                    block.caption
+                  )
+                : null
+            )
+          );
+        }
+
+        return null;
+      }
+
+      /*
+       * Main preview component.
+       */
+
+      const BydomingoPreview = createClass({
+        render: function () {
+          const entry = this.props.entry;
+          const getAsset = this.props.getAsset;
+
+          const title =
+            entry.getIn(["data", "title"]) || "Untitled post";
+
+          const backgroundImage =
+            entry.getIn(["data", "backgroundImage"]);
+
+          const rawBlocks =
+            entry.getIn(["data", "blocks"]);
+
+          const blocks = rawBlocks
+            ? (
+                typeof rawBlocks.toJS === "function"
+                  ? rawBlocks.toJS()
+                  : rawBlocks
+              )
+            : [];
+
+          const backgroundURL = assetURL(
+            backgroundImage,
+            getAsset
+          );
+
+          const backgroundStyle = backgroundURL
+            ? {
+                backgroundImage:
+                  "linear-gradient(" +
+                  "rgba(0,0,0,0.25)," +
+                  "rgba(0,0,0,0.25)" +
+                  "), url(" +
+                  JSON.stringify(backgroundURL) +
+                  ")"
+              }
+            : {};
+
+          return h(
+            "div",
+            { className: "bd-preview" },
+
+            h(
+              "header",
+              { className: "bd-header" },
+              h(
+                "h1",
+                {},
+                "bydomin",
+                h(
+                  "span",
+                  { className: "bd-pink" },
+                  "g"
+                ),
+                "o"
+              )
+            ),
+
+            h(
+              "article",
+              { className: "bd-post" },
+
+              backgroundURL
+                ? h("div", {
+                    className: "bd-background",
+                    style: backgroundStyle
+                  })
+                : null,
+
+              h(
+                "div",
+                { className: "bd-post-inner" },
+
+                h(
+                  "div",
+                  { className: "bd-title" },
+                  h("span", {}, title),
+                  h(
+                    "span",
+                    { className: "bd-symbol" },
+                    "−"
+                  )
+                ),
+
+                h(
+                  "div",
+                  { className: "bd-content" },
+
+                  Array.isArray(blocks) && blocks.length
+                    ? blocks.map((block, index) =>
+                        renderBlock(
+                          block,
+                          index,
+                          getAsset
+                        )
+                      )
+                    : h(
+                        "div",
+                        { className: "bd-empty" },
+                        "Your content will appear here..."
+                      )
+                )
+              )
+            )
+          );
+        }
+      });
+
+      CMS.registerPreviewTemplate(
+        "posts",
+        BydomingoPreview
+      );
+    </script>
   </body>
 </html>
