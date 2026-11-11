@@ -1,11 +1,19 @@
 
 ---
 import { getCollection } from 'astro:content';
+import MarkdownIt from 'markdown-it';
+
+const markdown = new MarkdownIt({
+  html: false,
+  breaks: true,
+  linkify: true
+});
 
 const posts = (await getCollection('posts'))
   .filter((post) => !post.data.draft)
-  .sort((a, b) =>
-    b.data.date.getTime() - a.data.date.getTime()
+  .sort(
+    (a, b) =>
+      b.data.date.getTime() - a.data.date.getTime()
   );
 ---
 
@@ -13,9 +21,10 @@ const posts = (await getCollection('posts'))
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0"
+      content="width=device-width, initial-scale=1"
     />
 
     <title>bydomingo</title>
@@ -85,14 +94,8 @@ const posts = (await getCollection('posts'))
       }
 
       /*
-       * BACKGROUND IMAGE
-       *
-       * The image is anchored to the top.
-       * Its size depends on the post width,
-       * not on whether the post is open.
-       *
-       * This prevents zooming or shifting
-       * during the opening animation.
+       * Background stays anchored to the top.
+       * Opening the post reveals more of the image.
        */
 
       .post.has-background::before {
@@ -118,7 +121,6 @@ const posts = (await getCollection('posts'))
           top center;
 
         background-repeat: no-repeat;
-
         opacity: 0.6;
       }
 
@@ -195,11 +197,62 @@ const posts = (await getCollection('posts'))
         width: 100%;
       }
 
-      /* TEXT */
+      /* RICH TEXT */
 
       .text-body {
-        white-space: pre-wrap;
         overflow-wrap: break-word;
+      }
+
+      .text-body :global(p) {
+        margin: 0 0 0.65em;
+      }
+
+      .text-body :global(p:last-child) {
+        margin-bottom: 0;
+      }
+
+      .text-body :global(strong) {
+        font-weight: 600;
+      }
+
+      .text-body :global(em) {
+        font-style: italic;
+      }
+
+      .text-body :global(del) {
+        text-decoration: line-through;
+      }
+
+      .text-body :global(a) {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+
+      .text-body :global(h2),
+      .text-body :global(h3) {
+        font-weight: 600;
+        line-height: 1.2;
+        margin: 0.7em 0 0.35em;
+      }
+
+      .text-body :global(ul),
+      .text-body :global(ol) {
+        padding-left: 1.4em;
+        margin: 0.5em 0;
+      }
+
+      .text-body :global(blockquote) {
+        border-left: 1px solid #777;
+        padding-left: 1em;
+        margin: 0.8em 0;
+        opacity: 0.85;
+      }
+
+      .text-body :global(img) {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0.7em auto;
       }
 
       .text-block.align-left {
@@ -226,7 +279,7 @@ const posts = (await getCollection('posts'))
         font-size: 27px;
       }
 
-      /* IMAGES, AUDIO, VIDEO */
+      /* MEDIA */
 
       .media-block {
         display: flex;
@@ -378,9 +431,10 @@ const posts = (await getCollection('posts'))
                   <div
                     class={`block text-block align-${block.alignment} size-${block.size}`}
                   >
-                    <div class="text-body">
-                      {block.text}
-                    </div>
+                    <div
+                      class="text-body"
+                      set:html={markdown.render(block.text || '')}
+                    />
                   </div>
                 ) :
 
@@ -457,9 +511,7 @@ const posts = (await getCollection('posts'))
     </main>
 
     <script is:inline>
-      /*
-       * COLOURED G LETTERS
-       */
+      /* RANDOM PASTEL G LETTERS */
 
       const colours = [
         '#d781ac',
@@ -523,12 +575,7 @@ const posts = (await getCollection('posts'))
 
       colourGs();
 
-      /*
-       * SMOOTH OPENING AND CLOSING
-       *
-       * Animate the height of the post,
-       * not the background image.
-       */
+      /* SMOOTH POST OPENING AND CLOSING */
 
       const reducedMotion = window.matchMedia(
         '(prefers-reduced-motion: reduce)'
@@ -556,7 +603,6 @@ const posts = (await getCollection('posts'))
           const startHeight =
             post.getBoundingClientRect().height;
 
-          // Make content measurable before animating.
           if (!wasOpen) {
             post.style.height = `${startHeight}px`;
             post.open = true;

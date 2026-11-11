@@ -13,16 +13,15 @@
   </head>
 
   <body>
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
+
     <script src="https://unpkg.com/decap-cms@^3.8.0/dist/decap-cms.js"></script>
 
-    <script>
-      /*
-       * BYDOMINGO — LIVE POST PREVIEW
-       *
-       * Displays the contents of the post
-       * while you edit it in Decap CMS.
-       */
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 
+    <script>
       CMS.registerPreviewStyle(`
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap');
 
@@ -30,209 +29,238 @@
           box-sizing: border-box;
         }
 
-        html,
         body {
           margin: 0;
-          padding: 0;
           background: #0d0d0d;
           color: #f5f3ee;
           font-family: "Crimson Pro", Georgia, serif;
           font-size: 19px;
+          line-height: 1.4;
         }
 
-        .bd-preview {
+        .preview {
           min-height: 100vh;
-          padding: 35px 5% 80px;
+          padding: 40px 5%;
           background: #0d0d0d;
           color: #f5f3ee;
         }
 
-        .bd-header {
-          text-align: center;
-          margin-bottom: 45px;
-        }
-
-        .bd-header h1 {
+        .site-name {
           font-size: 48px;
           font-weight: 400;
-          margin: 0;
+          text-align: center;
+          margin: 0 0 55px;
         }
 
-        .bd-pink {
+        .pink {
           color: #d781ac;
         }
 
-        .bd-post {
+        .post {
           position: relative;
           isolation: isolate;
           border-top: 1px solid #383838;
           border-bottom: 1px solid #383838;
           background: #0d0d0d;
-          min-height: 60px;
         }
 
-        .bd-background {
+        .background {
           position: absolute;
           inset: 0;
           z-index: 0;
-          pointer-events: none;
           opacity: 0.6;
-          background-size: 100% 100%, 100% auto;
+          pointer-events: none;
+
+          background-size:
+            100% 100%,
+            100% auto;
+
           background-position: top center;
           background-repeat: no-repeat;
         }
 
-        .bd-post-inner {
+        .foreground {
           position: relative;
           z-index: 1;
         }
 
-        .bd-title {
+        .post-title {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          gap: 20px;
+          gap: 12px;
           padding: 15px 3px;
           font-size: 21px;
-          line-height: 1.3;
         }
 
-        .bd-symbol {
-          font-size: 21px;
-          opacity: 0.65;
-        }
-
-        .bd-content {
+        .content {
           padding: 8px 3px 28px;
-          font-size: 19px;
-          line-height: 1.4;
         }
 
-        .bd-block {
-          margin-bottom: 18px;
-          overflow-wrap: anywhere;
+        .block {
+          margin: 0 0 18px;
+          overflow-wrap: break-word;
         }
 
-        .bd-text {
-          white-space: pre-wrap;
+        /* RICH TEXT */
+
+        .text p {
+          margin: 0 0 0.65em;
         }
 
-        .bd-small-text {
+        .text p:last-child {
+          margin-bottom: 0;
+        }
+
+        .text strong {
+          font-weight: 600;
+        }
+
+        .text em {
+          font-style: italic;
+        }
+
+        .text del {
+          text-decoration: line-through;
+        }
+
+        .text a {
+          color: inherit;
+        }
+
+        .text h2,
+        .text h3 {
+          margin: 0.7em 0 0.35em;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+
+        .text ul,
+        .text ol {
+          padding-left: 1.4em;
+        }
+
+        .text blockquote {
+          border-left: 1px solid #777;
+          padding-left: 1em;
+          margin-left: 0;
+          opacity: 0.85;
+        }
+
+        .text img {
+          display: block;
+          max-width: 100%;
+          height: auto;
+          margin: 0.7em auto;
+        }
+
+        .text-small {
           font-size: 16px;
         }
 
-        .bd-normal-text {
+        .text-normal {
           font-size: 19px;
         }
 
-        .bd-large-text {
+        .text-large {
           font-size: 27px;
         }
 
-        .bd-left {
+        .align-left {
           text-align: left;
         }
 
-        .bd-center {
+        .align-center {
           text-align: center;
         }
 
-        .bd-right {
+        .align-right {
           text-align: right;
         }
 
-        .bd-media {
+        /* MEDIA */
+
+        .media {
           display: flex;
           flex-direction: column;
         }
 
-        .bd-media.bd-left {
+        .media.align-left {
           align-items: flex-start;
         }
 
-        .bd-media.bd-center {
+        .media.align-center {
           align-items: center;
         }
 
-        .bd-media.bd-right {
+        .media.align-right {
           align-items: flex-end;
         }
 
-        .bd-media-inner {
+        .media-inner {
           max-width: 100%;
         }
 
-        .bd-media.bd-small .bd-media-inner {
+        .size-small .media-inner {
           width: 30%;
         }
 
-        .bd-media.bd-medium .bd-media-inner {
+        .size-medium .media-inner {
           width: 50%;
         }
 
-        .bd-media.bd-large .bd-media-inner {
+        .size-large .media-inner {
           width: 75%;
         }
 
-        .bd-media.bd-full .bd-media-inner {
+        .size-full .media-inner {
           width: 100%;
         }
 
-        .bd-media img,
-        .bd-media video,
-        .bd-media audio {
+        .media-inner img,
+        .media-inner video,
+        .media-inner audio {
           display: block;
           width: 100%;
           height: auto;
         }
 
-        .bd-caption {
+        .caption {
           margin-top: 7px;
           font-size: 15px;
           opacity: 0.65;
         }
-
-        .bd-empty {
-          opacity: 0.5;
-          font-style: italic;
-        }
-
-        @media (max-width: 650px) {
-          .bd-media.bd-small .bd-media-inner {
-            width: 65%;
-          }
-
-          .bd-media.bd-medium .bd-media-inner,
-          .bd-media.bd-large .bd-media-inner {
-            width: 100%;
-          }
-        }
       `, { raw: true });
 
       /*
-       * Resolve uploaded files.
-       * Works for existing files and new uploads.
+       * Get image URLs, including draft uploads.
        */
 
       function assetURL(path, getAsset) {
-        if (!path) return "";
+        if (!path) return '';
 
         try {
           const asset = getAsset(path);
 
           if (!asset) return path;
 
-          if (typeof asset === "string") {
+          if (typeof asset === 'string') {
             return asset;
           }
 
-          if (typeof asset.url === "string") {
+          if (typeof asset.url === 'string') {
             return asset.url;
+          }
+
+          if (
+            typeof asset.get === 'function' &&
+            asset.get('url')
+          ) {
+            return asset.get('url');
           }
 
           const result = asset.toString();
 
-          return result !== "[object Object]"
+          return result !== '[object Object]'
             ? result
             : path;
         } catch (error) {
@@ -241,77 +269,135 @@
       }
 
       /*
-       * Render one content block.
+       * Convert Markdown into formatted HTML.
        */
 
-      function renderBlock(block, index, getAsset) {
-        const type = block.type || "";
-        const alignment = block.alignment || "left";
-        const size = block.size || "medium";
+      function richHTML(text, getAsset) {
+        const parser = window.markdownit({
+          html: false,
+          breaks: true,
+          linkify: true
+        });
 
-        if (type === "text") {
-          return h(
-            "div",
-            {
-              key: index,
-              className:
-                "bd-block bd-text " +
-                "bd-" + alignment + " " +
-                "bd-" + (block.size || "normal") + "-text"
-            },
-            block.text || ""
-          );
+        const originalImage =
+          parser.renderer.rules.image;
+
+        parser.renderer.rules.image = function(
+          tokens,
+          index,
+          options,
+          env,
+          self
+        ) {
+          const token = tokens[index];
+          const src = token.attrGet('src');
+
+          if (src) {
+            token.attrSet(
+              'src',
+              assetURL(src, getAsset)
+            );
+          }
+
+          return originalImage
+            ? originalImage(
+                tokens,
+                index,
+                options,
+                env,
+                self
+              )
+            : self.renderToken(
+                tokens,
+                index,
+                options
+              );
+        };
+
+        return parser.render(text || '');
+      }
+
+      /*
+       * Render text, images, audio and video.
+       */
+
+      function blockPreview(block, index, getAsset) {
+        const alignment = block.alignment || 'left';
+        const size = block.size || 'medium';
+
+        if (block.type === 'text') {
+          return h('div', {
+            key: index,
+            className:
+              'block text text-' +
+              (block.size || 'normal') +
+              ' align-' + alignment,
+
+            dangerouslySetInnerHTML: {
+              __html: richHTML(
+                block.text,
+                getAsset
+              )
+            }
+          });
         }
 
         if (
-          type === "image" ||
-          type === "audio" ||
-          type === "video"
+          block.type === 'image' ||
+          block.type === 'audio' ||
+          block.type === 'video'
         ) {
-          const src = assetURL(block.src, getAsset);
+          const src = assetURL(
+            block.src,
+            getAsset
+          );
 
-          let media;
+          let element;
 
-          if (type === "image") {
-            media = h("img", {
+          if (block.type === 'image') {
+            element = h('img', {
               src: src,
-              alt: block.alt || ""
+              alt: block.alt || ''
             });
           }
 
-          if (type === "audio") {
-            media = h("audio", {
+          if (block.type === 'audio') {
+            element = h('audio', {
               src: src,
               controls: true,
-              preload: "none"
+              preload: 'none'
             });
           }
 
-          if (type === "video") {
-            media = h("video", {
+          if (block.type === 'video') {
+            element = h('video', {
               src: src,
               controls: true,
-              preload: "metadata"
+              preload: 'metadata'
             });
           }
 
           return h(
-            "div",
+            'div',
             {
               key: index,
               className:
-                "bd-block bd-media " +
-                "bd-" + alignment + " " +
-                "bd-" + size
+                'block media align-' +
+                alignment +
+                ' size-' +
+                size
             },
+
             h(
-              "div",
-              { className: "bd-media-inner" },
-              media,
+              'div',
+              { className: 'media-inner' },
+
+              element,
+
               block.caption
                 ? h(
-                    "div",
-                    { className: "bd-caption" },
+                    'div',
+                    { className: 'caption' },
                     block.caption
                   )
                 : null
@@ -323,110 +409,108 @@
       }
 
       /*
-       * Main preview component.
+       * Complete live preview.
        */
 
-      const BydomingoPreview = createClass({
+      const PostPreview = createClass({
         render: function () {
           const entry = this.props.entry;
           const getAsset = this.props.getAsset;
 
           const title =
-            entry.getIn(["data", "title"]) || "Untitled post";
+            entry.getIn(['data', 'title']) ||
+            'Untitled post';
 
-          const backgroundImage =
-            entry.getIn(["data", "backgroundImage"]);
+          const background =
+            entry.getIn([
+              'data',
+              'backgroundImage'
+            ]);
 
           const rawBlocks =
-            entry.getIn(["data", "blocks"]);
+            entry.getIn(['data', 'blocks']);
 
           const blocks = rawBlocks
             ? (
-                typeof rawBlocks.toJS === "function"
+                typeof rawBlocks.toJS === 'function'
                   ? rawBlocks.toJS()
                   : rawBlocks
               )
             : [];
 
           const backgroundURL = assetURL(
-            backgroundImage,
+            background,
             getAsset
           );
 
           const backgroundStyle = backgroundURL
             ? {
                 backgroundImage:
-                  "linear-gradient(" +
-                  "rgba(0,0,0,0.25)," +
-                  "rgba(0,0,0,0.25)" +
-                  "), url(" +
+                  'linear-gradient(' +
+                  'rgba(0,0,0,0.25),' +
+                  'rgba(0,0,0,0.25)' +
+                  '), url(' +
                   JSON.stringify(backgroundURL) +
-                  ")"
+                  ')'
               }
             : {};
 
           return h(
-            "div",
-            { className: "bd-preview" },
+            'div',
+            { className: 'preview' },
 
             h(
-              "header",
-              { className: "bd-header" },
+              'h1',
+              { className: 'site-name' },
+              'bydomin',
               h(
-                "h1",
-                {},
-                "bydomin",
-                h(
-                  "span",
-                  { className: "bd-pink" },
-                  "g"
-                ),
-                "o"
-              )
+                'span',
+                { className: 'pink' },
+                'g'
+              ),
+              'o'
             ),
 
             h(
-              "article",
-              { className: "bd-post" },
+              'article',
+              { className: 'post' },
 
               backgroundURL
-                ? h("div", {
-                    className: "bd-background",
+                ? h('div', {
+                    className: 'background',
                     style: backgroundStyle
                   })
                 : null,
 
               h(
-                "div",
-                { className: "bd-post-inner" },
+                'div',
+                { className: 'foreground' },
 
                 h(
-                  "div",
-                  { className: "bd-title" },
-                  h("span", {}, title),
-                  h(
-                    "span",
-                    { className: "bd-symbol" },
-                    "−"
-                  )
+                  'div',
+                  { className: 'post-title' },
+                  h('span', {}, title),
+                  h('span', {}, '−')
                 ),
 
                 h(
-                  "div",
-                  { className: "bd-content" },
+                  'div',
+                  { className: 'content' },
 
-                  Array.isArray(blocks) && blocks.length
-                    ? blocks.map((block, index) =>
-                        renderBlock(
-                          block,
-                          index,
-                          getAsset
-                        )
+                  Array.isArray(blocks) &&
+                  blocks.length
+                    ? blocks.map(
+                        (block, index) =>
+                          blockPreview(
+                            block,
+                            index,
+                            getAsset
+                          )
                       )
                     : h(
-                        "div",
-                        { className: "bd-empty" },
-                        "Your content will appear here..."
+                        'div',
+                        {},
+                        'Your content will appear here...'
                       )
                 )
               )
@@ -436,9 +520,11 @@
       });
 
       CMS.registerPreviewTemplate(
-        "posts",
-        BydomingoPreview
+        'posts',
+        PostPreview
       );
+
+      window.initCMS();
     </script>
   </body>
 </html>

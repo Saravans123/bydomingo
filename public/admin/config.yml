@@ -63,7 +63,23 @@ collections:
             fields:
               - label: Text
                 name: text
-                widget: text
+                widget: richtext
+                modes:
+                  - rich_text
+                  - raw
+                buttons:
+                  - bold
+                  - italic
+                  - strikethrough
+                  - link
+                  - heading-two
+                  - heading-three
+                  - quote
+                  - bulleted-list
+                  - numbered-list
+                editor_components:
+                  - image
+                hint: "Write freely and insert images between paragraphs."
 
               - label: Size
                 name: size
