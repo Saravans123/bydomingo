@@ -14,4 +14,9 @@ blocks:
     src: /uploads/borja.jpeg
     alt: sfvefv
     caption: vsfv
+  - type: text
+    size: small
+    alignment: center
+    text: ggcwedvcwdgvca wfdgcvhaw dgcvjahcköln
+      jeugfhqwdugvcwdugcqiuwdhcqwfdcqwgcugqwdouc
 ---
