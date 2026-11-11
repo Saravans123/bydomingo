@@ -43,6 +43,12 @@ collections:
         widget: boolean
         default: false
 
+      - label: Background image
+        name: backgroundImage
+        widget: image
+        required: false
+        hint: "Optional image behind the post title and content."
+
       - label: Content
         name: blocks
         widget: list
