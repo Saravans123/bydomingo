@@ -4,7 +4,7 @@ title: "wfwrrwtwdfwd qwfbuwqzorbfjz
   wjfm "
 date: 2026-11-11
 draft: false
-backgroundImage: /uploads/borja.jpeg
+backgroundImage: /uploads/7d5cf260-3975-4c08-98ac-b142671ab09d.jpg
 blocks:
   - type: text
     size: normal
@@ -17,7 +17,7 @@ blocks:
   - type: image
     size: small
     alignment: center
-    src: /uploads/borja.jpeg
+    src: /uploads/7d5cf260-3975-4c08-98ac-b142671ab09d.jpg
     alt: vevev
     caption: ehfbwer hjwer
 ---
