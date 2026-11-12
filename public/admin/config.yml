@@ -59,6 +59,17 @@ collections:
         required: false
         hint: "Optional image behind the post."
 
+      - label: Background transparency (%)
+        name: backgroundTransparency
+        widget: number
+        value_type: int
+        min: 0
+        max: 100
+        step: 5
+        default: 40
+        required: false
+        hint: "0 = strongest image. 100 = invisible image. Default: 40."
+
       - label: Content
         name: blocks
         widget: list

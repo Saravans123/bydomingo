@@ -24,6 +24,11 @@ function formatDate(date) {
     timeZone: 'UTC'
   }).format(date).toLowerCase();
 }
+
+function backgroundOpacity(transparency) {
+  const percentage = transparency ?? 40;
+  return 1 - percentage / 100;
+}
 ---
 
 <!doctype html>
@@ -209,7 +214,13 @@ function formatDate(date) {
       display: none;
     }
 
-    /* BACKGROUND IMAGE — COVER */
+    /* BACKGROUND IMAGE
+       COVER + INDIVIDUAL TRANSPARENCY
+
+       --post-opacity is calculated for each post.
+       Missing values default to 0.6, matching
+       the previous appearance.
+    */
 
     .post.has-background::before {
       content: "";
@@ -234,7 +245,8 @@ function formatDate(date) {
         center center;
 
       background-repeat: no-repeat;
-      opacity: 0.6;
+
+      opacity: var(--post-opacity, 0.6);
     }
 
     .post > summary,
@@ -263,7 +275,7 @@ function formatDate(date) {
       content: "";
     }
 
-    /* TITLE AND DATE — SAME LINE */
+    /* TITLE AND DATE */
 
     .post-heading {
       display: flex;
@@ -289,8 +301,6 @@ function formatDate(date) {
     .post summary:hover .post-title {
       opacity: 0.7;
     }
-
-    /* SMALL GREY DATE */
 
     .post summary .post-heading .post-date {
       display: inline-block;
@@ -698,7 +708,12 @@ function formatDate(date) {
               ? {
                   '--post-image': `url(${JSON.stringify(
                     post.data.backgroundImage
-                  )})`
+                  )})`,
+                  '--post-opacity': String(
+                    backgroundOpacity(
+                      post.data.backgroundTransparency
+                    )
+                  )
                 }
               : undefined
           }
