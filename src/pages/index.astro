@@ -15,637 +15,1060 @@ const posts = (await getCollection('posts'))
     (a, b) =>
       b.data.date.getTime() - a.data.date.getTime()
   );
+
+function formatDate(date) {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  }).format(date).toLowerCase();
+}
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+  <meta charset="UTF-8" />
 
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-    <title>bydomingo</title>
+  <title>bydomingo</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
 
-    <style>
-      :global(*) {
-        box-sizing: border-box;
-      }
+  <style>
+    :global(*) {
+      box-sizing: border-box;
+    }
 
-      :global(html) {
-        scroll-behavior: smooth;
-      }
+    :global(html) {
+      scroll-behavior: smooth;
+    }
 
-      :global(body) {
-        margin: 0;
-        background: #0d0d0d;
-        color: #f5f3ee;
-        font-family: "Crimson Pro", Georgia, serif;
-        font-size: 19px;
-        -webkit-font-smoothing: antialiased;
-      }
+    :global(body) {
+      margin: 0;
+      background: #0d0d0d;
+      color: #f5f3ee;
+      font-family: "Crimson Pro", Georgia, serif;
+      font-size: 19px;
+      -webkit-font-smoothing: antialiased;
+    }
 
+    main {
+      width: 100%;
+      padding: 45px 5% 100px;
+    }
+
+    /* HEADER */
+
+    header {
+      text-align: center;
+      margin-bottom: 38px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(44px, 6vw, 72px);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    .site-title {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* SEARCH AND CONTACT */
+
+    .header-tools {
+      display: grid;
+      grid-template-columns: 1fr minmax(145px, 220px) 1fr;
+      align-items: center;
+      gap: 8px;
+      margin-top: 21px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 29px;
+      padding: 3px 9px;
+      border: 1px solid #494949;
+      border-radius: 0;
+      background: transparent;
+      color: #f5f3ee;
+      font-family: "Crimson Pro", Georgia, serif;
+      font-size: 12px;
+      font-style: normal;
+      text-align: center;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #888;
+      opacity: 1;
+    }
+
+    .search-input:focus {
+      border-color: #ddd;
+    }
+
+    /* SOCIAL ICONS */
+
+    .social-links {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      border: 0;
+      background: transparent;
+      color: #f5f3ee;
+      cursor: pointer;
+      opacity: 0.82;
+    }
+
+    .social-link:hover {
+      opacity: 1;
+    }
+
+    .social-link svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* EMAIL POPUP */
+
+    .email-popup {
+      position: absolute;
+      top: 34px;
+      right: 0;
+      z-index: 10;
+      min-width: 235px;
+      padding: 16px 19px;
+      background: #202020;
+      border: 1px solid #484848;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+      text-align: left;
+    }
+
+    .email-popup[hidden] {
+      display: none;
+    }
+
+    .email-label {
+      display: block;
+      margin-bottom: 9px;
+      color: #aaa;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .email-address {
+      color: #f5f3ee;
+      font-size: 16px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* POSTS */
+
+    .posts {
+      width: 100%;
+      border-top: 1px solid #383838;
+    }
+
+    .post {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      border-bottom: 1px solid #383838;
+      background-color: #0d0d0d;
+    }
+
+    .post[hidden] {
+      display: none;
+    }
+
+    /* BACKGROUND IMAGE — COVER */
+
+    .post.has-background::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+
+      background-image:
+        linear-gradient(
+          rgba(0, 0, 0, 0.25),
+          rgba(0, 0, 0, 0.25)
+        ),
+        var(--post-image);
+
+      background-size:
+        100% 100%,
+        cover;
+
+      background-position:
+        center center,
+        center center;
+
+      background-repeat: no-repeat;
+      opacity: 0.6;
+    }
+
+    .post > summary,
+    .post > .post-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* POST ROW */
+
+    .post summary {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 3px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .post summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .post summary::marker {
+      content: "";
+    }
+
+    /* TITLE AND DATE — SAME LINE */
+
+    .post-heading {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      min-width: 0;
+    }
+
+    .post-title {
+      display: inline;
+      min-width: 0;
+      font-family: "Crimson Pro", Georgia, serif;
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+      transition: opacity 0.2s ease;
+    }
+
+    .post summary:hover .post-title {
+      opacity: 0.7;
+    }
+
+    /* SMALL GREY DATE */
+
+    .post summary .post-heading .post-date {
+      display: inline-block;
+      flex-shrink: 0;
+      margin: 0;
+      padding: 0;
+      color: #8d8d8d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      font-style: normal;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+
+    /* CATEGORY */
+
+    .post-category {
+      flex-shrink: 0;
+      color: #aaa;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* PLUS / MINUS */
+
+    .symbol {
+      flex: 0 0 18px;
+      width: 18px;
+      text-align: center;
+      font-size: 21px;
+      line-height: 1;
+      opacity: 0.65;
+    }
+
+    .symbol::after {
+      content: "+";
+    }
+
+    .post[open] .symbol::after {
+      content: "−";
+    }
+
+    /* EXPANDED POST */
+
+    .post-content {
+      width: 100%;
+      padding: 8px 3px 28px;
+      font-size: 19px;
+      line-height: 1.4;
+    }
+
+    .block {
+      width: 100%;
+      margin: 0 0 18px;
+    }
+
+    /* RICH TEXT */
+
+    .text-body {
+      overflow-wrap: break-word;
+    }
+
+    .text-body :global(p) {
+      margin: 0 0 0.65em;
+    }
+
+    .text-body :global(p:last-child) {
+      margin-bottom: 0;
+    }
+
+    .text-body :global(strong) {
+      font-weight: 600;
+    }
+
+    .text-body :global(a) {
+      color: inherit;
+      text-underline-offset: 3px;
+    }
+
+    .text-body :global(h2),
+    .text-body :global(h3) {
+      margin: 0.7em 0 0.35em;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .text-body :global(ul),
+    .text-body :global(ol) {
+      padding-left: 1.4em;
+      margin: 0.5em 0;
+    }
+
+    .text-body :global(blockquote) {
+      border-left: 1px solid #777;
+      padding-left: 1em;
+      margin: 0.8em 0;
+      opacity: 0.85;
+    }
+
+    .text-body :global(img) {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0.7em auto;
+    }
+
+    .text-block.align-left {
+      text-align: left;
+    }
+
+    .text-block.align-center {
+      text-align: center;
+    }
+
+    .text-block.align-right {
+      text-align: right;
+    }
+
+    .text-block.size-small {
+      font-size: 16px;
+    }
+
+    .text-block.size-normal {
+      font-size: 19px;
+    }
+
+    .text-block.size-large {
+      font-size: 27px;
+    }
+
+    /* IMAGES, AUDIO AND VIDEO */
+
+    .media-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-block.align-left {
+      align-items: flex-start;
+    }
+
+    .media-block.align-center {
+      align-items: center;
+    }
+
+    .media-block.align-right {
+      align-items: flex-end;
+    }
+
+    .media-inner {
+      max-width: 100%;
+    }
+
+    .media-block.size-small .media-inner {
+      width: 30%;
+    }
+
+    .media-block.size-medium .media-inner {
+      width: 50%;
+    }
+
+    .media-block.size-large .media-inner {
+      width: 75%;
+    }
+
+    .media-block.size-full .media-inner {
+      width: 100%;
+    }
+
+    .media-inner img,
+    .media-inner video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .media-inner audio {
+      display: block;
+      width: 100%;
+    }
+
+    .media-inner figure {
+      margin: 0;
+    }
+
+    .media-caption {
+      margin-top: 7px;
+      font-size: 15px;
+      opacity: 0.65;
+    }
+
+    .empty,
+    .search-empty {
+      padding: 18px 3px;
+      color: #999;
+      font-size: 16px;
+    }
+
+    .search-empty {
+      display: none;
+    }
+
+    .search-empty.visible {
+      display: block;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 650px) {
       main {
-        width: 100%;
-        padding: 45px 5% 100px;
+        padding: 35px 5% 70px;
       }
 
       header {
-        text-align: center;
-        margin-bottom: 65px;
+        margin-bottom: 32px;
       }
-
-      h1 {
-        margin: 0;
-        font-size: clamp(44px, 6vw, 72px);
-        font-weight: 400;
-        line-height: 1.1;
-      }
-
-      .site-title {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .pink {
-        color: #d781ac;
-      }
-
-      .posts {
-        width: 100%;
-        border-top: 1px solid #383838;
-      }
-
-      /* POSTS */
-
-      .post {
-        position: relative;
-        isolation: isolate;
-        width: 100%;
-        border-bottom: 1px solid #383838;
-        background-color: #0d0d0d;
-      }
-
-      /*
-       * Background stays anchored to the top.
-       * Opening the post reveals more of the image.
-       */
-
-      .post.has-background::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-
-        background-image:
-          linear-gradient(
-            rgba(0, 0, 0, 0.25),
-            rgba(0, 0, 0, 0.25)
-          ),
-          var(--post-image);
-
-        background-size:
-          100% 100%,
-          100% auto;
-
-        background-position:
-          top center,
-          top center;
-
-        background-repeat: no-repeat;
-        opacity: 0.6;
-      }
-
-      .post > summary,
-      .post > .post-content {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* CLOSED POST */
 
       .post summary {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-        padding: 15px 3px;
-        cursor: pointer;
-        list-style: none;
-        user-select: none;
-        transition: opacity 0.2s ease;
-      }
-
-      .post summary:hover {
-        opacity: 0.7;
-      }
-
-      .post summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .post summary::marker {
-        content: "";
+        gap: 9px;
+        padding: 14px 2px;
       }
 
       .post-title {
-        display: block;
-        flex: 1;
-        min-width: 0;
-        font-size: 21px;
-        font-weight: 400;
-        line-height: 1.3;
-        overflow-wrap: break-word;
+        font-size: 19px;
       }
 
-      .symbol {
-        flex: 0 0 18px;
-        width: 18px;
-        text-align: center;
-        font-size: 21px;
-        line-height: 1;
-        opacity: 0.65;
+      .post summary .post-heading .post-date {
+        font-size: 9px;
       }
 
-      .symbol::after {
-        content: "+";
+      .post-category {
+        font-size: 9px;
+        letter-spacing: 0.08em;
       }
-
-      .post[open] .symbol::after {
-        content: "−";
-      }
-
-      /* OPEN POST */
 
       .post-content {
-        padding: 8px 3px 28px;
-        font-size: 19px;
-        line-height: 1.4;
-        width: 100%;
+        font-size: 18px;
       }
 
-      .block {
-        margin: 0 0 18px;
-        width: 100%;
+      .social-links {
+        gap: 9px;
       }
 
-      /* RICH TEXT */
-
-      .text-body {
-        overflow-wrap: break-word;
-      }
-
-      .text-body :global(p) {
-        margin: 0 0 0.65em;
-      }
-
-      .text-body :global(p:last-child) {
-        margin-bottom: 0;
-      }
-
-      .text-body :global(strong) {
-        font-weight: 600;
-      }
-
-      .text-body :global(em) {
-        font-style: italic;
-      }
-
-      .text-body :global(del) {
-        text-decoration: line-through;
-      }
-
-      .text-body :global(a) {
-        color: inherit;
-        text-underline-offset: 3px;
-      }
-
-      .text-body :global(h2),
-      .text-body :global(h3) {
-        font-weight: 600;
-        line-height: 1.2;
-        margin: 0.7em 0 0.35em;
-      }
-
-      .text-body :global(ul),
-      .text-body :global(ol) {
-        padding-left: 1.4em;
-        margin: 0.5em 0;
-      }
-
-      .text-body :global(blockquote) {
-        border-left: 1px solid #777;
-        padding-left: 1em;
-        margin: 0.8em 0;
-        opacity: 0.85;
-      }
-
-      .text-body :global(img) {
-        display: block;
-        max-width: 100%;
-        height: auto;
-        margin: 0.7em auto;
-      }
-
-      .text-block.align-left {
-        text-align: left;
-      }
-
-      .text-block.align-center {
-        text-align: center;
-      }
-
-      .text-block.align-right {
-        text-align: right;
-      }
-
-      .text-block.size-small {
-        font-size: 16px;
-      }
-
-      .text-block.size-normal {
-        font-size: 19px;
-      }
-
-      .text-block.size-large {
-        font-size: 27px;
-      }
-
-      /* MEDIA */
-
-      .media-block {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .media-block.align-left {
-        align-items: flex-start;
-      }
-
-      .media-block.align-center {
-        align-items: center;
-      }
-
-      .media-block.align-right {
-        align-items: flex-end;
-      }
-
-      .media-inner {
-        max-width: 100%;
+      .social-link svg {
+        width: 19px;
+        height: 19px;
       }
 
       .media-block.size-small .media-inner {
-        width: 30%;
+        width: 65%;
       }
 
-      .media-block.size-medium .media-inner {
-        width: 50%;
-      }
-
+      .media-block.size-medium .media-inner,
       .media-block.size-large .media-inner {
-        width: 75%;
-      }
-
-      .media-block.size-full .media-inner {
         width: 100%;
       }
+    }
+  </style>
+</head>
 
-      .media-inner img,
-      .media-inner video {
-        display: block;
-        width: 100%;
-        height: auto;
-      }
+<body id="top">
+  <main>
 
-      .media-inner audio {
-        display: block;
-        width: 100%;
-      }
+    <!-- HEADER -->
 
-      .media-inner figure {
-        margin: 0;
-      }
+    <header>
+      <h1>
+        <a href="#top" class="site-title">
+          bydomingo
+        </a>
+      </h1>
 
-      .media-caption {
-        margin-top: 7px;
-        font-size: 15px;
-        opacity: 0.65;
-      }
+      <div class="header-tools">
+        <div aria-hidden="true"></div>
 
-      .empty {
-        opacity: 0.5;
-        padding: 18px 3px;
-      }
+        <!-- SEARCH -->
 
-      /* MOBILE */
+        <input
+          id="post-search"
+          class="search-input"
+          type="search"
+          placeholder="what do you want"
+          aria-label="Search posts"
+          autocomplete="off"
+        />
 
-      @media (max-width: 650px) {
-        main {
-          padding: 35px 5% 70px;
-        }
+        <!-- SOCIAL ICONS -->
 
-        header {
-          margin-bottom: 45px;
-        }
+        <div class="social-links">
 
-        .post summary {
-          padding: 14px 2px;
-        }
-
-        .post-title {
-          font-size: 19px;
-        }
-
-        .post-content {
-          font-size: 18px;
-        }
-
-        .media-block.size-small .media-inner {
-          width: 65%;
-        }
-
-        .media-block.size-medium .media-inner,
-        .media-block.size-large .media-inner {
-          width: 100%;
-        }
-      }
-    </style>
-  </head>
-
-  <body id="top">
-    <main>
-      <header>
-        <h1>
-          <a href="#top" class="site-title">
-            bydomin<span class="pink">g</span>o
-          </a>
-        </h1>
-      </header>
-
-      <section class="posts">
-        {posts.length === 0 && (
-          <div class="empty">No posts yet.</div>
-        )}
-
-        {posts.map((post) => (
-          <details
-            class:list={[
-              'post',
-              {
-                'has-background':
-                  !!post.data.backgroundImage
-              }
-            ]}
-            style={
-              post.data.backgroundImage
-                ? {
-                    '--post-image': `url(${JSON.stringify(
-                      post.data.backgroundImage
-                    )})`
-                  }
-                : undefined
-            }
+          <a
+            class="social-link"
+            href="https://www.instagram.com/bydoming0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            title="Instagram"
           >
-            <summary>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect
+                x="2.5"
+                y="2.5"
+                width="19"
+                height="19"
+                rx="5"
+              />
+              <circle cx="12" cy="12" r="4.1" />
+              <circle
+                cx="17.8"
+                cy="6.3"
+                r=".9"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+          </a>
+
+          <button
+            id="email-button"
+            class="social-link"
+            type="button"
+            aria-label="Show email address"
+            aria-expanded="false"
+            aria-controls="email-popup"
+            title="Email"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect
+                x="2"
+                y="4.5"
+                width="20"
+                height="15"
+                rx="2"
+              />
+              <path d="m3 6 9 7 9-7" />
+            </svg>
+          </button>
+
+          <div
+            id="email-popup"
+            class="email-popup"
+            hidden
+          >
+            <span class="email-label">
+              CONTACT
+            </span>
+
+            <a
+              class="email-address"
+              href="mailto:bydomingo22@gmail.com"
+            >
+              bydomingo22@gmail.com
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- POSTS -->
+
+    <section class="posts">
+
+      {posts.length === 0 && (
+        <div class="empty">
+          No posts yet.
+        </div>
+      )}
+
+      {posts.map((post) => (
+        <details
+          class:list={[
+            'post',
+            {
+              'has-background':
+                !!post.data.backgroundImage
+            }
+          ]}
+          data-search={[
+            post.data.title,
+            post.data.category || '',
+            formatDate(post.data.date),
+            ...(post.data.blocks || []).map((block) => {
+              if (block.type === 'text') {
+                return block.text || '';
+              }
+
+              return [
+                block.caption || '',
+                block.type === 'image'
+                  ? (block.alt || '')
+                  : ''
+              ].join(' ');
+            })
+          ].join(' ').toLowerCase()}
+          style={
+            post.data.backgroundImage
+              ? {
+                  '--post-image': `url(${JSON.stringify(
+                    post.data.backgroundImage
+                  )})`
+                }
+              : undefined
+          }
+        >
+
+          <!-- TITLE, DATE, CATEGORY -->
+
+          <summary>
+
+            <span class="post-heading">
+
               <span class="post-title">
                 {post.data.title}
               </span>
 
-              <span
-                class="symbol"
-                aria-hidden="true"
-              ></span>
-            </summary>
+              <time
+                class="post-date"
+                datetime={post.data.date.toISOString().slice(0, 10)}
+              >
+                {formatDate(post.data.date)}
+              </time>
 
-            <div class="post-content">
-              {post.data.blocks.map((block) => (
-                block.type === 'text' ? (
+            </span>
+
+            {post.data.category && (
+              <span class="post-category">
+                {post.data.category}
+              </span>
+            )}
+
+            <span
+              class="symbol"
+              aria-hidden="true"
+            ></span>
+
+          </summary>
+
+          <!-- EXPANDED CONTENT -->
+
+          <div class="post-content">
+
+            {(post.data.blocks || []).map((block) => (
+
+              block.type === 'text' ? (
+                <div
+                  class={`block text-block align-${block.alignment || 'left'} size-${block.size || 'normal'}`}
+                >
                   <div
-                    class={`block text-block align-${block.alignment} size-${block.size}`}
-                  >
-                    <div
-                      class="text-body"
-                      set:html={markdown.render(block.text || '')}
-                    />
-                  </div>
-                ) :
+                    class="text-body"
+                    set:html={markdown.render(block.text || '')}
+                  />
+                </div>
+              ) :
 
-                block.type === 'image' ? (
-                  <div
-                    class={`block media-block align-${block.alignment} size-${block.size}`}
-                  >
-                    <div class="media-inner">
-                      <figure>
-                        <img
-                          src={block.src}
-                          alt={block.alt || ''}
-                          loading="lazy"
-                        />
-
-                        {block.caption && (
-                          <figcaption class="media-caption">
-                            {block.caption}
-                          </figcaption>
-                        )}
-                      </figure>
-                    </div>
-                  </div>
-                ) :
-
-                block.type === 'audio' ? (
-                  <div
-                    class={`block media-block align-${block.alignment} size-${block.size}`}
-                  >
-                    <div class="media-inner">
-                      <audio
-                        controls
-                        preload="none"
+              block.type === 'image' ? (
+                <div
+                  class={`block media-block align-${block.alignment || 'center'} size-${block.size || 'medium'}`}
+                >
+                  <div class="media-inner">
+                    <figure>
+                      <img
                         src={block.src}
-                      >
-                        Your browser does not support audio.
-                      </audio>
+                        alt={block.alt || ''}
+                        loading="lazy"
+                      />
 
                       {block.caption && (
-                        <div class="media-caption">
+                        <figcaption class="media-caption">
                           {block.caption}
-                        </div>
+                        </figcaption>
                       )}
-                    </div>
+                    </figure>
                   </div>
-                ) :
+                </div>
+              ) :
 
-                block.type === 'video' ? (
-                  <div
-                    class={`block media-block align-${block.alignment} size-${block.size}`}
-                  >
-                    <div class="media-inner">
-                      <video
-                        controls
-                        preload="metadata"
-                        src={block.src}
-                      >
-                        Your browser does not support video.
-                      </video>
+              block.type === 'audio' ? (
+                <div
+                  class={`block media-block align-${block.alignment || 'center'} size-${block.size || 'large'}`}
+                >
+                  <div class="media-inner">
+                    <audio
+                      controls
+                      preload="none"
+                      src={block.src}
+                    >
+                      Your browser does not support audio.
+                    </audio>
 
-                      {block.caption && (
-                        <div class="media-caption">
-                          {block.caption}
-                        </div>
-                      )}
-                    </div>
+                    {block.caption && (
+                      <div class="media-caption">
+                        {block.caption}
+                      </div>
+                    )}
                   </div>
-                ) : null
-              ))}
-            </div>
-          </details>
-        ))}
-      </section>
-    </main>
+                </div>
+              ) :
 
-    <script is:inline>
-      /* RANDOM PASTEL G LETTERS */
+              block.type === 'video' ? (
+                <div
+                  class={`block media-block align-${block.alignment || 'center'} size-${block.size || 'large'}`}
+                >
+                  <div class="media-inner">
+                    <video
+                      controls
+                      preload="metadata"
+                      src={block.src}
+                    >
+                      Your browser does not support video.
+                    </video>
 
-      const colours = [
-        '#d781ac',
-        '#b89ad9',
-        '#8fb9d4',
-        '#86c8bd',
-        '#99c58f',
-        '#d8c778',
-        '#e7ad7d',
-        '#d99a98'
-      ];
+                    {block.caption && (
+                      <div class="media-caption">
+                        {block.caption}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : null
 
-      function colourGs() {
-        const walker = document.createTreeWalker(
-          document.body,
-          NodeFilter.SHOW_TEXT
+            ))}
+
+          </div>
+        </details>
+      ))}
+
+      <div
+        id="search-empty"
+        class="search-empty"
+      >
+        No posts found.
+      </div>
+
+    </section>
+  </main>
+
+  <script is:inline>
+
+    /* SEARCH */
+
+    const searchInput =
+      document.getElementById('post-search');
+
+    const searchEmpty =
+      document.getElementById('search-empty');
+
+    const allPosts = [
+      ...document.querySelectorAll('.post')
+    ];
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value
+          .trim()
+          .toLocaleLowerCase();
+
+        let visibleCount = 0;
+
+        allPosts.forEach((post) => {
+          const searchableText =
+            post.dataset.search || '';
+
+          const matches =
+            searchableText.includes(query);
+
+          post.hidden = !matches;
+
+          if (matches) {
+            visibleCount++;
+          }
+        });
+
+        if (searchEmpty) {
+          searchEmpty.classList.toggle(
+            'visible',
+            visibleCount === 0 &&
+            allPosts.length > 0
+          );
+        }
+      });
+    }
+
+    /* EMAIL POPUP */
+
+    const emailButton =
+      document.getElementById('email-button');
+
+    const emailPopup =
+      document.getElementById('email-popup');
+
+    function closeEmailPopup() {
+      if (!emailPopup || !emailButton) return;
+
+      emailPopup.hidden = true;
+
+      emailButton.setAttribute(
+        'aria-expanded',
+        'false'
+      );
+    }
+
+    if (emailButton && emailPopup) {
+      emailButton.addEventListener('click', () => {
+        emailPopup.hidden = !emailPopup.hidden;
+
+        emailButton.setAttribute(
+          'aria-expanded',
+          String(!emailPopup.hidden)
         );
+      });
 
-        const nodes = [];
+      document.addEventListener('click', (event) => {
+        if (
+          !emailPopup.contains(event.target) &&
+          !emailButton.contains(event.target)
+        ) {
+          closeEmailPopup();
+        }
+      });
 
-        while (walker.nextNode()) {
-          const node = walker.currentNode;
-          const parent = node.parentElement;
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeEmailPopup();
+        }
+      });
+    }
 
-          if (
-            parent &&
-            /g/i.test(node.textContent || '') &&
-            !parent.closest(
-              '.site-title, .special-letter, script, style, svg'
-            )
-          ) {
-            nodes.push(node);
+    /* RANDOM PASTEL D AND G LETTERS */
+
+    const colours = [
+      '#d781ac',
+      '#b89ad9',
+      '#8fb9d4',
+      '#86c8bd',
+      '#99c58f',
+      '#d8c778',
+      '#e7ad7d',
+      '#d99a98'
+    ];
+
+    function colourLetters() {
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT
+      );
+
+      const nodes = [];
+
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parent = node.parentElement;
+
+        if (
+          parent &&
+          /[gd]/i.test(node.textContent || '') &&
+          !parent.closest(
+            '.special-letter, script, style, svg, noscript'
+          )
+        ) {
+          nodes.push(node);
+        }
+      }
+
+      nodes.forEach((node) => {
+        const fragment =
+          document.createDocumentFragment();
+
+        for (const character of node.textContent || '') {
+          if (/[gd]/i.test(character)) {
+            const span =
+              document.createElement('span');
+
+            span.className = 'special-letter';
+
+            const randomIndex = Math.floor(
+              Math.random() * colours.length
+            );
+
+            span.style.color = colours[randomIndex];
+            span.textContent = character;
+
+            fragment.appendChild(span);
+          } else {
+            fragment.appendChild(
+              document.createTextNode(character)
+            );
           }
         }
 
-        nodes.forEach((node) => {
-          const fragment = document.createDocumentFragment();
-
-          for (const character of node.textContent || '') {
-            if (character.toLowerCase() === 'g') {
-              const span = document.createElement('span');
-              span.className = 'special-letter';
-
-              span.style.color =
-                colours[Math.floor(
-                  Math.random() * colours.length
-                )];
-
-              span.textContent = character;
-              fragment.appendChild(span);
-            } else {
-              fragment.appendChild(
-                document.createTextNode(character)
-              );
-            }
-          }
-
-          node.parentNode.replaceChild(fragment, node);
-        });
-      }
-
-      colourGs();
-
-      /* SMOOTH POST OPENING AND CLOSING */
-
-      const reducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      );
-
-      document.querySelectorAll('.post').forEach((post) => {
-        const summary = post.querySelector('summary');
-        const content = post.querySelector('.post-content');
-
-        if (!summary || !content) return;
-
-        let animating = false;
-
-        summary.addEventListener('click', (event) => {
-          if (reducedMotion.matches) return;
-
-          event.preventDefault();
-
-          if (animating) return;
-
-          animating = true;
-
-          const wasOpen = post.open;
-
-          const startHeight =
-            post.getBoundingClientRect().height;
-
-          if (!wasOpen) {
-            post.style.height = `${startHeight}px`;
-            post.open = true;
-          }
-
-          const summaryHeight = summary.offsetHeight;
-          const contentHeight = content.offsetHeight;
-
-          const endHeight = wasOpen
-            ? summaryHeight + 1
-            : summaryHeight + contentHeight + 1;
-
-          post.style.overflow = 'hidden';
-
-          const animation = post.animate(
-            [
-              { height: `${startHeight}px` },
-              { height: `${endHeight}px` }
-            ],
-            {
-              duration: 420,
-              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-              fill: 'both'
-            }
-          );
-
-          animation.onfinish = () => {
-            if (wasOpen) {
-              post.open = false;
-            }
-
-            post.style.height = '';
-            post.style.overflow = '';
-            animating = false;
-          };
-
-          animation.oncancel = () => {
-            post.style.height = '';
-            post.style.overflow = '';
-            animating = false;
-          };
-        });
+        node.parentNode.replaceChild(
+          fragment,
+          node
+        );
       });
-    </script>
-  </body>
+    }
+
+    colourLetters();
+
+    /* SMOOTH EXPAND / COLLAPSE */
+
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    document.querySelectorAll('.post').forEach((post) => {
+      const summary = post.querySelector('summary');
+      const content = post.querySelector('.post-content');
+
+      if (!summary || !content) return;
+
+      let animating = false;
+
+      summary.addEventListener('click', (event) => {
+        if (reducedMotion.matches) return;
+
+        event.preventDefault();
+
+        if (animating) return;
+
+        animating = true;
+
+        const wasOpen = post.open;
+
+        const startHeight =
+          post.getBoundingClientRect().height;
+
+        if (!wasOpen) {
+          post.style.height = `${startHeight}px`;
+          post.open = true;
+        }
+
+        const summaryHeight = summary.offsetHeight;
+        const contentHeight = content.offsetHeight;
+
+        const endHeight = wasOpen
+          ? summaryHeight + 1
+          : summaryHeight + contentHeight + 1;
+
+        post.style.overflow = 'hidden';
+
+        const animation = post.animate(
+          [
+            { height: `${startHeight}px` },
+            { height: `${endHeight}px` }
+          ],
+          {
+            duration: 420,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both'
+          }
+        );
+
+        animation.onfinish = () => {
+          if (wasOpen) {
+            post.open = false;
+          }
+
+          post.style.height = '';
+          post.style.overflow = '';
+          animating = false;
+        };
+
+        animation.oncancel = () => {
+          post.style.height = '';
+          post.style.overflow = '';
+          animating = false;
+        };
+      });
+    });
+
+  </script>
+</body>
 </html>
