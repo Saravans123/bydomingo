@@ -38,6 +38,16 @@ collections:
         date_format: "YYYY-MM-DD"
         time_format: false
 
+      - label: Category
+        name: category
+        widget: select
+        required: false
+        hint: "Choose Poetry, Robot or Music."
+        options:
+          - { label: Poetry, value: Poetry }
+          - { label: Robot, value: Robot }
+          - { label: Music, value: Music }
+
       - label: Draft
         name: draft
         widget: boolean
@@ -47,7 +57,7 @@ collections:
         name: backgroundImage
         widget: image
         required: false
-        hint: "Optional image behind the post title and content."
+        hint: "Optional image behind the post."
 
       - label: Content
         name: blocks
@@ -63,7 +73,7 @@ collections:
             fields:
               - label: Text
                 name: text
-                widget: richtext
+                widget: markdown
                 modes:
                   - rich_text
                   - raw
@@ -79,7 +89,6 @@ collections:
                   - numbered-list
                 editor_components:
                   - image
-                hint: "Write freely and insert images between paragraphs."
 
               - label: Size
                 name: size

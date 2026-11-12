@@ -52,9 +52,16 @@ const block = z.discriminatedUnion('type', [
 const postSchema = z.object({
   title: z.string(),
   date: z.coerce.date(),
+
+  // Optional so existing posts still work.
+  category: z.enum([
+    'Poetry',
+    'Robot',
+    'Music'
+  ]).optional(),
+
   draft: z.boolean().default(false),
 
-  // Optional background image for each post
   backgroundImage: z.string().nullish(),
 
   blocks: z.array(block).optional().default([])
