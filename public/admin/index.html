@@ -1,23 +1,530 @@
 
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
+  <head>
+    <meta charset="utf-8" />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
 
-  <title>bydomingo — Admin</title>
+    <title>bydomingo admin</title>
+  </head>
 
-  <link
-    rel="icon"
-    href="data:,"
-  />
-</head>
+  <body>
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
 
-<body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-</body>
+    <script src="https://unpkg.com/decap-cms@^3.8.0/dist/decap-cms.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+
+    <script>
+      CMS.registerPreviewStyle(`
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap');
+
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          background: #0d0d0d;
+          color: #f5f3ee;
+          font-family: "Crimson Pro", Georgia, serif;
+          font-size: 19px;
+          line-height: 1.4;
+        }
+
+        .preview {
+          min-height: 100vh;
+          padding: 40px 5%;
+          background: #0d0d0d;
+          color: #f5f3ee;
+        }
+
+        .site-name {
+          font-size: 48px;
+          font-weight: 400;
+          text-align: center;
+          margin: 0 0 55px;
+        }
+
+        .pink {
+          color: #d781ac;
+        }
+
+        .post {
+          position: relative;
+          isolation: isolate;
+          border-top: 1px solid #383838;
+          border-bottom: 1px solid #383838;
+          background: #0d0d0d;
+        }
+
+        .background {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          opacity: 0.6;
+          pointer-events: none;
+
+          background-size:
+            100% 100%,
+            100% auto;
+
+          background-position: top center;
+          background-repeat: no-repeat;
+        }
+
+        .foreground {
+          position: relative;
+          z-index: 1;
+        }
+
+        .post-title {
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 15px 3px;
+          font-size: 21px;
+        }
+
+        .content {
+          padding: 8px 3px 28px;
+        }
+
+        .block {
+          margin: 0 0 18px;
+          overflow-wrap: break-word;
+        }
+
+        /* RICH TEXT */
+
+        .text p {
+          margin: 0 0 0.65em;
+        }
+
+        .text p:last-child {
+          margin-bottom: 0;
+        }
+
+        .text strong {
+          font-weight: 600;
+        }
+
+        .text em {
+          font-style: italic;
+        }
+
+        .text del {
+          text-decoration: line-through;
+        }
+
+        .text a {
+          color: inherit;
+        }
+
+        .text h2,
+        .text h3 {
+          margin: 0.7em 0 0.35em;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+
+        .text ul,
+        .text ol {
+          padding-left: 1.4em;
+        }
+
+        .text blockquote {
+          border-left: 1px solid #777;
+          padding-left: 1em;
+          margin-left: 0;
+          opacity: 0.85;
+        }
+
+        .text img {
+          display: block;
+          max-width: 100%;
+          height: auto;
+          margin: 0.7em auto;
+        }
+
+        .text-small {
+          font-size: 16px;
+        }
+
+        .text-normal {
+          font-size: 19px;
+        }
+
+        .text-large {
+          font-size: 27px;
+        }
+
+        .align-left {
+          text-align: left;
+        }
+
+        .align-center {
+          text-align: center;
+        }
+
+        .align-right {
+          text-align: right;
+        }
+
+        /* MEDIA */
+
+        .media {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .media.align-left {
+          align-items: flex-start;
+        }
+
+        .media.align-center {
+          align-items: center;
+        }
+
+        .media.align-right {
+          align-items: flex-end;
+        }
+
+        .media-inner {
+          max-width: 100%;
+        }
+
+        .size-small .media-inner {
+          width: 30%;
+        }
+
+        .size-medium .media-inner {
+          width: 50%;
+        }
+
+        .size-large .media-inner {
+          width: 75%;
+        }
+
+        .size-full .media-inner {
+          width: 100%;
+        }
+
+        .media-inner img,
+        .media-inner video,
+        .media-inner audio {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .caption {
+          margin-top: 7px;
+          font-size: 15px;
+          opacity: 0.65;
+        }
+      `, { raw: true });
+
+      /*
+       * Get image URLs, including draft uploads.
+       */
+
+      function assetURL(path, getAsset) {
+        if (!path) return '';
+
+        try {
+          const asset = getAsset(path);
+
+          if (!asset) return path;
+
+          if (typeof asset === 'string') {
+            return asset;
+          }
+
+          if (typeof asset.url === 'string') {
+            return asset.url;
+          }
+
+          if (
+            typeof asset.get === 'function' &&
+            asset.get('url')
+          ) {
+            return asset.get('url');
+          }
+
+          const result = asset.toString();
+
+          return result !== '[object Object]'
+            ? result
+            : path;
+        } catch (error) {
+          return path;
+        }
+      }
+
+      /*
+       * Convert Markdown into formatted HTML.
+       */
+
+      function richHTML(text, getAsset) {
+        const parser = window.markdownit({
+          html: false,
+          breaks: true,
+          linkify: true
+        });
+
+        const originalImage =
+          parser.renderer.rules.image;
+
+        parser.renderer.rules.image = function(
+          tokens,
+          index,
+          options,
+          env,
+          self
+        ) {
+          const token = tokens[index];
+          const src = token.attrGet('src');
+
+          if (src) {
+            token.attrSet(
+              'src',
+              assetURL(src, getAsset)
+            );
+          }
+
+          return originalImage
+            ? originalImage(
+                tokens,
+                index,
+                options,
+                env,
+                self
+              )
+            : self.renderToken(
+                tokens,
+                index,
+                options
+              );
+        };
+
+        return parser.render(text || '');
+      }
+
+      /*
+       * Render text, images, audio and video.
+       */
+
+      function blockPreview(block, index, getAsset) {
+        const alignment = block.alignment || 'left';
+        const size = block.size || 'medium';
+
+        if (block.type === 'text') {
+          return h('div', {
+            key: index,
+            className:
+              'block text text-' +
+              (block.size || 'normal') +
+              ' align-' + alignment,
+
+            dangerouslySetInnerHTML: {
+              __html: richHTML(
+                block.text,
+                getAsset
+              )
+            }
+          });
+        }
+
+        if (
+          block.type === 'image' ||
+          block.type === 'audio' ||
+          block.type === 'video'
+        ) {
+          const src = assetURL(
+            block.src,
+            getAsset
+          );
+
+          let element;
+
+          if (block.type === 'image') {
+            element = h('img', {
+              src: src,
+              alt: block.alt || ''
+            });
+          }
+
+          if (block.type === 'audio') {
+            element = h('audio', {
+              src: src,
+              controls: true,
+              preload: 'none'
+            });
+          }
+
+          if (block.type === 'video') {
+            element = h('video', {
+              src: src,
+              controls: true,
+              preload: 'metadata'
+            });
+          }
+
+          return h(
+            'div',
+            {
+              key: index,
+              className:
+                'block media align-' +
+                alignment +
+                ' size-' +
+                size
+            },
+
+            h(
+              'div',
+              { className: 'media-inner' },
+
+              element,
+
+              block.caption
+                ? h(
+                    'div',
+                    { className: 'caption' },
+                    block.caption
+                  )
+                : null
+            )
+          );
+        }
+
+        return null;
+      }
+
+      /*
+       * Complete live preview.
+       */
+
+      const PostPreview = createClass({
+        render: function () {
+          const entry = this.props.entry;
+          const getAsset = this.props.getAsset;
+
+          const title =
+            entry.getIn(['data', 'title']) ||
+            'Untitled post';
+
+          const background =
+            entry.getIn([
+              'data',
+              'backgroundImage'
+            ]);
+
+          const rawBlocks =
+            entry.getIn(['data', 'blocks']);
+
+          const blocks = rawBlocks
+            ? (
+                typeof rawBlocks.toJS === 'function'
+                  ? rawBlocks.toJS()
+                  : rawBlocks
+              )
+            : [];
+
+          const backgroundURL = assetURL(
+            background,
+            getAsset
+          );
+
+          const backgroundStyle = backgroundURL
+            ? {
+                backgroundImage:
+                  'linear-gradient(' +
+                  'rgba(0,0,0,0.25),' +
+                  'rgba(0,0,0,0.25)' +
+                  '), url(' +
+                  JSON.stringify(backgroundURL) +
+                  ')'
+              }
+            : {};
+
+          return h(
+            'div',
+            { className: 'preview' },
+
+            h(
+              'h1',
+              { className: 'site-name' },
+              'bydomin',
+              h(
+                'span',
+                { className: 'pink' },
+                'g'
+              ),
+              'o'
+            ),
+
+            h(
+              'article',
+              { className: 'post' },
+
+              backgroundURL
+                ? h('div', {
+                    className: 'background',
+                    style: backgroundStyle
+                  })
+                : null,
+
+              h(
+                'div',
+                { className: 'foreground' },
+
+                h(
+                  'div',
+                  { className: 'post-title' },
+                  h('span', {}, title),
+                  h('span', {}, '−')
+                ),
+
+                h(
+                  'div',
+                  { className: 'content' },
+
+                  Array.isArray(blocks) &&
+                  blocks.length
+                    ? blocks.map(
+                        (block, index) =>
+                          blockPreview(
+                            block,
+                            index,
+                            getAsset
+                          )
+                      )
+                    : h(
+                        'div',
+                        {},
+                        'Your content will appear here...'
+                      )
+                )
+              )
+            )
+          );
+        }
+      });
+
+      CMS.registerPreviewTemplate(
+        'posts',
+        PostPreview
+      );
+
+      window.initCMS();
+    </script>
+  </body>
 </html>
